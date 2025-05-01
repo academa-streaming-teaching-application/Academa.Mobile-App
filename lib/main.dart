@@ -1,4 +1,5 @@
-import 'package:academa_streaming_platform/app.dart';
+import 'package:academa_streaming_platform/config/router/app_router.dart';
+import 'package:academa_streaming_platform/config/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,17 +8,12 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const App(),
+      theme: AppTheme().theme(),
+      routerConfig: appRouter,
     );
   }
 }
