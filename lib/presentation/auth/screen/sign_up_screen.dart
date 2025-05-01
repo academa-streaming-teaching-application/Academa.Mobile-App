@@ -1,8 +1,8 @@
 import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.dart';
 import 'package:flutter/material.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   static const _headerStyle = TextStyle(
     fontSize: 32,
@@ -12,7 +12,6 @@ class SignInScreen extends StatelessWidget {
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
-
   static const _backgroundDecoration = BoxDecoration(
     image: DecorationImage(
       scale: 0.5,
@@ -34,8 +33,9 @@ class SignInScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              //
               const Text(
-                'Inicia sesión en\ntu cuenta',
+                'Regístrate en\nla plataforma',
                 textAlign: TextAlign.center,
                 style: _headerStyle,
               ),
@@ -45,7 +45,7 @@ class SignInScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: screenHeight * 0.01),
                 child: const Text(
-                  'Ingresa tu correo y contraseña para iniciar sesión',
+                  'Ingresa tu correo y contraseña para registrarte',
                   textAlign: TextAlign.center,
                   style: _subtitleStyle,
                 ),
@@ -55,7 +55,9 @@ class SignInScreen extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(top: screenHeight * 0.05),
-                child: AuthForm(),
+                child: const AuthForm(
+                  isSignIn: false,
+                ),
               ),
             ],
           ),

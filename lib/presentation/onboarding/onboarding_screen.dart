@@ -1,5 +1,6 @@
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -37,6 +38,7 @@ class OnboardingScreen extends StatelessWidget {
                   textSize: 20,
                   buttonWidth: 285,
                   buttonHeight: 65,
+                  onPressed: () => {context.go('/sign-in')},
                 ),
               )
             ],
