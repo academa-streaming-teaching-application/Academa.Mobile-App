@@ -11,10 +11,11 @@ class SignInScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
+        width: double.maxFinite,
+        height: double.maxFinite,
         decoration: BoxDecoration(
           image: DecorationImage(
+            scale: 0.5,
             image: AssetImage('lib/config/assets/sign_in_up_background.png'),
           ),
         ),

@@ -30,6 +30,7 @@ class OnboardingScreen extends StatelessWidget {
                 width: 285,
                 height: 65,
                 child: CustomButton(
+                  fontWeight: FontWeight.bold,
                   text: 'Comienza',
                   textColor: colorScheme.onPrimary,
                   backgroundColor: colorScheme.primary,
