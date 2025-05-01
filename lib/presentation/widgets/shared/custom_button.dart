@@ -36,14 +36,16 @@ class CustomButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //the spread basically expands the children adding whats inside the square brackets
             if (buttonIcon != null) ...[
               buttonIcon!,
               SizedBox(width: 8),
             ],
             Text(
               text,
-              style: TextStyle(color: textColor, fontSize: textSize),
+              style: TextStyle(
+                  color: textColor,
+                  fontSize: textSize,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),
