@@ -20,7 +20,7 @@ class OnboardingScreen extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .displayLarge
-                    ?.copyWith(color: colorScheme.primary),
+                    ?.copyWith(color: colorScheme.onPrimary),
                 textAlign: TextAlign.center,
               ),
               Image.asset(
@@ -33,8 +33,8 @@ class OnboardingScreen extends StatelessWidget {
                 child: CustomButton(
                   fontWeight: FontWeight.bold,
                   text: 'Comienza',
-                  textColor: colorScheme.onPrimary,
-                  backgroundColor: colorScheme.primary,
+                  textColor: colorScheme.secondary,
+                  backgroundColor: colorScheme.onPrimary,
                   textSize: 20,
                   buttonWidth: 285,
                   buttonHeight: 65,
