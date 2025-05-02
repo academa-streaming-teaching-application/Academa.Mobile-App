@@ -1,17 +1,14 @@
 import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
-  static const _headerStyle = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
-  );
-  static const _subtitleStyle = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-  );
+  static const _headerStyle =
+      TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
+  static const _subtitleStyle =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black);
   static const _backgroundDecoration = BoxDecoration(
     image: DecorationImage(
       scale: 0.5,
@@ -55,8 +52,9 @@ class SignUpScreen extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(top: screenHeight * 0.05),
-                child: const AuthForm(
+                child: AuthForm(
                   isSignIn: false,
+                  onSubmitPressed: () => context.go('/home-screen'),
                 ),
               ),
             ],

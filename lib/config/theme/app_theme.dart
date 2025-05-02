@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFFB300FF);
-  static const Color secondaryColor = Color(0xFF2B2A2A);
-  static const Color backgroundColor = Color(0xFF161616);
+  static const Color secondaryColor = Color(0xFF2F2F2F);
+  static const Color backgroundColor = Color(0xFF000000);
   static const Color errorColor = Color(0xFFD93F21);
   static const Color onLiveColor = Color(0xFFFFD500);
   static const Color profilePrimaryClassColor = Color(0xFF167EE6);

@@ -37,6 +37,7 @@ class AuthForm extends StatelessWidget {
   static final _boxDecoration = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.all(Radius.circular(5)),
+    border: Border.all(color: Colors.white),
     boxShadow: [
       BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))
     ],
@@ -108,10 +109,10 @@ class AuthForm extends StatelessWidget {
 
             CustomButton(
               text: isSignIn ? 'Inicia sesión' : 'Regístrate',
-              textColor: colorScheme.onPrimary,
+              textColor: colorScheme.secondary,
               textSize: 16,
               fontWeight: FontWeight.w500,
-              backgroundColor: colorScheme.primary,
+              backgroundColor: colorScheme.onPrimary,
               buttonWidth: double.infinity,
               buttonHeight: 48,
               onPressed: onSubmitPressed,

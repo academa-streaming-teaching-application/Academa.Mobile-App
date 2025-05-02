@@ -37,6 +37,7 @@ dependencies:
   go_router: ^14.8.0
   flutter_svg: ^2.0.17
   animate_do: ^4.2.0
+  card_swiper: ^3.0.1
 
 dev_dependencies:
   flutter_test:

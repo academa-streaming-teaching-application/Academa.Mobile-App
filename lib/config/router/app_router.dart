@@ -1,5 +1,6 @@
 import 'package:academa_streaming_platform/presentation/auth/screen/sign_in_screen.dart';
 import 'package:academa_streaming_platform/presentation/auth/screen/sign_up_screen.dart';
+import 'package:academa_streaming_platform/presentation/home/screen/home_screen.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -39,5 +40,9 @@ final appRouter = GoRouter(
         },
       ),
     ),
+    GoRoute(
+      path: '/home-screen',
+      builder: (context, state) => const HomeScreen(),
+    )
   ],
 );
