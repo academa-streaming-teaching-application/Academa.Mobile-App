@@ -10,8 +10,8 @@ class CustomBodyContainer extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8),
       child: Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          color: Color.fromARGB(255, 240, 240, 240),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         width: double.infinity,
         height: double.infinity,

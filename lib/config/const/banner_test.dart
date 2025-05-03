@@ -1,4 +1,5 @@
 import 'package:academa_streaming_platform/presentation/home/widgets/class_card.dart';
+import 'package:academa_streaming_platform/presentation/home/widgets/keep_watching.dart';
 import 'package:academa_streaming_platform/presentation/home/widgets/live_banner.dart';
 
 final List<LiveBanner> liveBanners = [
@@ -59,5 +60,32 @@ final List<ClassCard> classCards = [
     imagePath: 'lib/config/assets/productivity_square.png',
     title: 'Programación',
     subtitle: 'Flutter paso a paso',
+  ),
+];
+final List<KeepWatchingCard> keepWatching = [
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Matemáticas Básicas',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Física Aplicada',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Historia Universal',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Arte Moderno',
+    studentCount: 10,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Programación',
+    studentCount: 10,
   ),
 ];

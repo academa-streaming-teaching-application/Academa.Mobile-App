@@ -47,10 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final cardHeight = size.height * 0.22;
+    final keepWatchingHeight = size.height * 0.12;
     return Scaffold(
       appBar: const CustomAppBar(),
       body: CustomBodyContainer(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LiveBannerSwiper(banners: liveBanners),
             const SizedBox(height: 16),
@@ -60,9 +64,25 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: (i) => setState(() => _selectedFilterIndex = i),
             ),
             const SizedBox(height: 8),
-            HorizontalSlider(cards: classCards),
-            const SizedBox(height: 16),
-            ContinueWatchingSection(items: _continueWatching),
+            HorizontalSlider(
+              cards: classCards,
+              height: cardHeight,
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+              child: Text(
+                'Continúa viendo',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black),
+              ),
+            ),
+            HorizontalSlider(
+              cards: keepWatching,
+              height: keepWatchingHeight,
+            ),
           ],
         ),
       ),

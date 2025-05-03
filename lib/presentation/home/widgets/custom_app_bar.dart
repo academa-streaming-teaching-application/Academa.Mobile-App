@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       EdgeInsets.symmetric(horizontal: 16);
 
   static const BorderRadius _searchBoxRadius =
-      BorderRadius.all(Radius.circular(12));
+      BorderRadius.all(Radius.circular(16));
 
   static const double _searchIconSize = 20.0;
 
@@ -44,15 +44,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return AppBar(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text('Usuario', style: _titleStyle),
-          SizedBox(height: 2),
-          Text('user@example.com', style: _subtitleStyle),
+        children: [
+          const Text('Usuario', style: _titleStyle),
+          const SizedBox(height: 2),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.person,
+                size: 16,
+                color: colorScheme.primary,
+              ),
+              SizedBox(width: 4),
+              const Text('user@example.com', style: _subtitleStyle),
+            ],
+          )
         ],
       ),
       actions: [

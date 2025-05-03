@@ -33,7 +33,7 @@ class LiveBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(18.0),
       child: SizedBox(
         height: height,
         child: Stack(
@@ -46,7 +46,7 @@ class LiveBanner extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
             Padding(
@@ -69,7 +69,7 @@ class LiveBanner extends StatelessWidget {
                 height: 32,
                 decoration: BoxDecoration(
                   color: Color(0xFFB300FF),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: const Text(
