@@ -68,7 +68,7 @@ class CustomBottomNavigation extends StatelessWidget {
         children: [
           _buildItem(
               context, 0, Icons.home_filled, 'Inicio', currentIndex == 0),
-          _buildItem(context, 1, Icons.favorite, 'Trending', currentIndex == 1),
+          _buildItem(context, 1, Icons.save, 'Guardados', currentIndex == 1),
           _buildItem(context, 2, Icons.person, 'Perfil', currentIndex == 2),
         ],
       ),
