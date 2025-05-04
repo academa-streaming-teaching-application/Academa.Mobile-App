@@ -2,8 +2,8 @@ import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.d
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class SignInView extends StatelessWidget {
+  const SignInView({super.key});
 
   static const _headerStyle =
       TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
@@ -53,7 +53,7 @@ class SignInScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: screenHeight * 0.05),
                 child: AuthForm(
-                  onSubmitPressed: () => context.go('/home-screen'),
+                  onSubmitPressed: () => context.go('/'),
                 ),
               ),
             ],

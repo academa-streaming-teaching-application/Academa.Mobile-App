@@ -2,8 +2,8 @@ import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.d
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class SignUpView extends StatelessWidget {
+  const SignUpView({super.key});
 
   static const _headerStyle =
       TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black);
