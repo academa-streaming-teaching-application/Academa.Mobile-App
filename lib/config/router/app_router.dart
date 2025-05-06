@@ -1,6 +1,7 @@
 import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view.dart';
 import 'package:academa_streaming_platform/presentation/auth/views/sign_up_view.dart';
-import 'package:academa_streaming_platform/presentation/favorites/views/favorites_view.dart';
+import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
+import 'package:academa_streaming_platform/presentation/saves/views/favorites_view.dart';
 import 'package:academa_streaming_platform/presentation/home/views/home_view.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:academa_streaming_platform/presentation/screens/main_screen.dart';
@@ -67,8 +68,16 @@ final appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/favorites-view',
+              path: '/saves-view',
               builder: (context, state) => const FavoritesView(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/profile-view',
+              builder: (context, state) => const ProfileView(),
             ),
           ],
         ),

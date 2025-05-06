@@ -10,7 +10,7 @@ class CustomBottomNavigation extends StatelessWidget {
       case '/':
         return 0;
 
-      case '/favorites-view':
+      case '/saves-view':
         return 1;
 
       case '/profile-view':
@@ -26,7 +26,7 @@ class CustomBottomNavigation extends StatelessWidget {
         context.go('/');
         break;
       case 1:
-        context.go('/favorites-view');
+        context.go('/saves-view');
         break;
       case 2:
         context.go('/profile-view');
@@ -68,7 +68,8 @@ class CustomBottomNavigation extends StatelessWidget {
         children: [
           _buildItem(
               context, 0, Icons.home_filled, 'Inicio', currentIndex == 0),
-          _buildItem(context, 1, Icons.save, 'Guardados', currentIndex == 1),
+          _buildItem(
+              context, 1, Icons.turned_in_not, 'Guardados', currentIndex == 1),
           _buildItem(context, 2, Icons.person, 'Perfil', currentIndex == 2),
         ],
       ),
