@@ -16,7 +16,7 @@ class AppTheme {
       scaffoldBackgroundColor: backgroundColor,
       primaryColor: primaryColor,
       colorScheme: ColorScheme.fromSwatch().copyWith(
-        primary: primaryColor,
+        primary: const Color(0xFFB300FF),
         secondary: secondaryColor,
         tertiary: profilePrimaryClassColor,
         error: errorColor,
@@ -54,7 +54,7 @@ class AppTheme {
       ),
       cupertinoOverrideTheme: const CupertinoThemeData(
         textTheme: CupertinoTextThemeData(
-          textStyle: TextStyle(fontFamily: 'SFProDisplay'),
+          textStyle: TextStyle(fontFamily: ''),
         ),
       ),
     );

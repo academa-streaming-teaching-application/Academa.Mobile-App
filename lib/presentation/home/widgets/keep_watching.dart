@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 
 class KeepWatchingCard extends StatelessWidget {
   const KeepWatchingCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.studentCount,
     required this.imagePath,
-  }) : super(key: key);
+    this.cardByPropsHeight,
+    this.cardByPropsWidth,
+  });
 
   final String title;
   final int studentCount;
   final String imagePath;
+
+  final double? cardByPropsHeight;
+  final double? cardByPropsWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +25,8 @@ class KeepWatchingCard extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Container(
-        width: cardWidth,
-        height: double.maxFinite,
+        width: cardByPropsWidth ?? cardWidth,
+        height: cardByPropsHeight ?? double.maxFinite,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -43,9 +48,9 @@ class KeepWatchingCard extends StatelessWidget {
               ),
               child: Image.asset(
                 imagePath,
-                width: 72,
-                height: double.maxFinite,
-                fit: BoxFit.contain,
+                width: 100,
+                height: 100,
+                fit: BoxFit.scaleDown,
               ),
             ),
             const SizedBox(width: 12),
