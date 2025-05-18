@@ -88,4 +88,29 @@ final List<KeepWatchingCard> keepWatching = [
     title: 'Programación',
     studentCount: 10,
   ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Matemáticasef Básicas',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Físicfefa Aplicada',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Historia Ufefefniversal',
+    studentCount: 25,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Arte Mo1e2fderno',
+    studentCount: 10,
+  ),
+  KeepWatchingCard(
+    imagePath: 'lib/config/assets/productivity_square.png',
+    title: 'Progra12efmación',
+    studentCount: 10,
+  ),
 ];

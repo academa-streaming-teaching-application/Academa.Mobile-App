@@ -9,10 +9,8 @@ class CustomBottomNavigation extends StatelessWidget {
     switch (path) {
       case '/':
         return 0;
-
-      case '/saves-view':
+      case '/favorites-view':
         return 1;
-
       case '/profile-view':
         return 2;
       default:
@@ -26,7 +24,7 @@ class CustomBottomNavigation extends StatelessWidget {
         context.go('/');
         break;
       case 1:
-        context.go('/saves-view');
+        context.go('/favorites-view');
         break;
       case 2:
         context.go('/profile-view');
@@ -34,9 +32,16 @@ class CustomBottomNavigation extends StatelessWidget {
     }
   }
 
-  Widget _buildItem(BuildContext context, int index, IconData icon,
-      String label, bool selected) {
-    Color color = selected ? Colors.white : Colors.grey;
+  Widget _buildItem(
+    BuildContext context, {
+    required int index,
+    required IconData outlinedIcon,
+    required IconData filledIcon,
+    required String label,
+    required bool selected,
+  }) {
+    final color = selected ? Colors.white : Colors.grey;
+    final iconData = selected ? filledIcon : outlinedIcon;
     return GestureDetector(
       onTap: () => onItemTapped(context, index),
       behavior: HitTestBehavior.opaque,
@@ -44,7 +49,7 @@ class CustomBottomNavigation extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color),
+          Icon(iconData, color: color),
           const SizedBox(height: 4),
           Text(label, style: TextStyle(color: color, fontSize: 12)),
         ],
@@ -57,20 +62,39 @@ class CustomBottomNavigation extends StatelessWidget {
     final currentIndex = getCurrentIndex(context);
 
     return Container(
-      margin: EdgeInsets.all(16),
-      height: 72,
+      margin: const EdgeInsets.all(16),
+      height: 82,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(36),
         color: Colors.black,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildItem(
-              context, 0, Icons.home_filled, 'Inicio', currentIndex == 0),
+            context,
+            index: 0,
+            outlinedIcon: Icons.home_outlined,
+            filledIcon: Icons.home_rounded,
+            label: 'Inicio',
+            selected: currentIndex == 0,
+          ),
           _buildItem(
-              context, 1, Icons.turned_in_not, 'Guardados', currentIndex == 1),
-          _buildItem(context, 2, Icons.person, 'Perfil', currentIndex == 2),
+            context,
+            index: 1,
+            outlinedIcon: Icons.turned_in_not,
+            filledIcon: Icons.turned_in,
+            label: 'Guardados',
+            selected: currentIndex == 1,
+          ),
+          _buildItem(
+            context,
+            index: 2,
+            outlinedIcon: Icons.person_2_outlined,
+            filledIcon: Icons.person_2_rounded,
+            label: 'Perfil',
+            selected: currentIndex == 2,
+          ),
         ],
       ),
     );

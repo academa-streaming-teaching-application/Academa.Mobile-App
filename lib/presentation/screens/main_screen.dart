@@ -8,10 +8,9 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: childView,
-      bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Color.fromARGB(255, 240, 240, 240)),
-          child: CustomBottomNavigation()),
+      bottomNavigationBar: CustomBottomNavigation(),
     );
   }
 }

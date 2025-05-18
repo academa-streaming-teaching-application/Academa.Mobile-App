@@ -1,7 +1,8 @@
 import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view.dart';
 import 'package:academa_streaming_platform/presentation/auth/views/sign_up_view.dart';
+import 'package:academa_streaming_platform/presentation/class/views/class_view.dart';
 import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
-import 'package:academa_streaming_platform/presentation/saves/views/favorites_view.dart';
+import 'package:academa_streaming_platform/presentation/favorites/views/favorites_view.dart';
 import 'package:academa_streaming_platform/presentation/home/views/home_view.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:academa_streaming_platform/presentation/screens/main_screen.dart';
@@ -68,7 +69,7 @@ final appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/saves-view',
+              path: '/favorites-view',
               builder: (context, state) => const FavoritesView(),
             ),
           ],
@@ -90,6 +91,21 @@ final appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/class-view',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ClassView(),
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ),
     ),
   ],
 );
