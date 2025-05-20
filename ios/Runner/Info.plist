@@ -45,5 +45,20 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- 🔑 Permisos y ATS añadidos -->
+	<key>NSCameraUsageDescription</key>
+	<string>Necesitamos la cámara para transmitir video en vivo</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Necesitamos el micrófono para transmitir audio en vivo</string>
+
+	<!-- Si tu backend usa http:// en vez de https:// -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!-- Fin de claves añadidas -->
+
 </dict>
 </plist>

@@ -13,6 +13,8 @@ class CustomBottomNavigation extends StatelessWidget {
         return 1;
       case '/profile-view':
         return 2;
+      case '/live-view':
+        return 3; // nuevo caso
       default:
         return 0;
     }
@@ -28,6 +30,9 @@ class CustomBottomNavigation extends StatelessWidget {
         break;
       case 2:
         context.go('/profile-view');
+        break;
+      case 3:
+        context.go('/live-view'); // navega a CreateLiveScreen
         break;
     }
   }
@@ -49,7 +54,7 @@ class CustomBottomNavigation extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(iconData, color: color),
+          Icon(iconData, color: color, size: 28),
           const SizedBox(height: 4),
           Text(label, style: TextStyle(color: color, fontSize: 12)),
         ],
@@ -94,6 +99,14 @@ class CustomBottomNavigation extends StatelessWidget {
             filledIcon: Icons.person_2_rounded,
             label: 'Perfil',
             selected: currentIndex == 2,
+          ),
+          _buildItem(
+            context,
+            index: 3,
+            outlinedIcon: Icons.videocam_outlined,
+            filledIcon: Icons.videocam_rounded,
+            label: 'Live',
+            selected: currentIndex == 3,
           ),
         ],
       ),

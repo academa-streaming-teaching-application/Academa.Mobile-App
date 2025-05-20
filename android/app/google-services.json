@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "137583794740",
+    "project_id": "academa-2e5da",
+    "storage_bucket": "academa-2e5da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137583794740:android:69c4ec00221c47ae040861",
+        "android_client_info": {
+          "package_name": "com.example.academa_streaming_platform"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137583794740-45pf0mi7f6fsn58kccrq87cuqad9bqtc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOTxqblYskXquBEcItytZp4i5RAbEdywA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137583794740-45pf0mi7f6fsn58kccrq87cuqad9bqtc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "137583794740-oqlkf8smvheevqu0p9qj8qj463usf08d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.academaStreamingPlatform"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
