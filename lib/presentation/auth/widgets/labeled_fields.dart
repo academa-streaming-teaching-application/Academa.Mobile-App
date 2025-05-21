@@ -5,13 +5,16 @@ class LabeledField extends StatelessWidget {
     super.key,
     required this.label,
     this.obscure = false,
+    required this.controller,
   });
+
   static const _inputDecoration = InputDecoration(border: OutlineInputBorder());
   static const _labelStyle =
       TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
 
   final String label;
   final bool obscure;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +24,7 @@ class LabeledField extends StatelessWidget {
         Text(label, style: _labelStyle),
         const SizedBox(height: 8),
         TextFormField(
+          controller: controller,
           decoration: _inputDecoration,
           obscureText: obscure,
           keyboardType:

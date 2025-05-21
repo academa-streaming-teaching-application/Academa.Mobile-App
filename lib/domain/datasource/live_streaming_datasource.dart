@@ -1,7 +1,7 @@
-import 'package:academa_streaming_platform/domain/entities/live_model.dart';
+import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
 
 abstract class LiveStreamingDataSource {
-  Future<LiveModel> createLiveSession(String title);
+  Future<LiveStreamingEntity> createLiveSession(String title);
 
-  Future<List<LiveModel>> fetchSessions();
+  Future<List<LiveStreamingEntity>> fetchSessions();
 }

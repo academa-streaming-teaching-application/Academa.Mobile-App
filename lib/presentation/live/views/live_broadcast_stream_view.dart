@@ -1,10 +1,10 @@
-import 'package:academa_streaming_platform/presentation/live/provider/live_broadcast_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rtmp_broadcaster/camera.dart';
-import '../../../domain/repositories/live_streaming_repositories.dart';
+import '../../../domain/repositories/live_streaming_repository.dart';
+import '../provider/live_streaming_broadcast_provider.dart';
 
-const String kTeacherId = 'teacher_123';
+const String demoTeacherId = 'teacher_123';
 
 class LiveBroadcastScreen extends StatelessWidget {
   const LiveBroadcastScreen({super.key});
@@ -12,39 +12,47 @@ class LiveBroadcastScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => LiveBroadcastProvider(
+      create: (_) => LiveStreamingBroadcastProvider(
         repository: context.read<LiveStreamingRepository>(),
-        teacherId: kTeacherId,
+        teacherId: demoTeacherId,
       )..initCamera(),
-      child: Consumer<LiveBroadcastProvider>(
-        builder: (context, vm, _) {
-          if (!vm.cameraReady) {
+      child: Consumer<LiveStreamingBroadcastProvider>(
+        builder: (context, liveBroadcastProvider, _) {
+          if (!liveBroadcastProvider.cameraReady) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          if (vm.errorMessage != null) {
+
+          if (liveBroadcastProvider.errorMessage != null) {
             return Scaffold(
               appBar: AppBar(title: const Text('Live')),
               body: Center(
-                child: Text(vm.errorMessage!,
-                    style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  liveBroadcastProvider.errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
               ),
             );
           }
-          // vista normal
+
           return Scaffold(
-            body: CameraPreview(vm.controller),
+            body: CameraPreview(liveBroadcastProvider.controller),
             floatingActionButton: FloatingActionButton(
-              backgroundColor: vm.isStreaming ? Colors.red : null,
-              onPressed: vm.startingStream
+              backgroundColor:
+                  liveBroadcastProvider.isStreaming ? Colors.red : null,
+              onPressed: liveBroadcastProvider.startingStream
                   ? null
-                  : vm.isStreaming
-                      ? vm.stopStream
-                      : vm.startStream,
-              child: vm.startingStream
+                  : liveBroadcastProvider.isStreaming
+                      ? liveBroadcastProvider.stopStream
+                      : liveBroadcastProvider.startStream,
+              child: liveBroadcastProvider.startingStream
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : Icon(vm.isStreaming ? Icons.stop : Icons.videocam),
+                  : Icon(
+                      liveBroadcastProvider.isStreaming
+                          ? Icons.stop
+                          : Icons.videocam,
+                    ),
             ),
           );
         },

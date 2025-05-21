@@ -52,9 +52,7 @@ class SignInView extends StatelessWidget {
 
               Padding(
                 padding: EdgeInsets.only(top: screenHeight * 0.05),
-                child: AuthForm(
-                  onSubmitPressed: () => context.go('/'),
-                ),
+                child: AuthForm(),
               ),
             ],
           ),

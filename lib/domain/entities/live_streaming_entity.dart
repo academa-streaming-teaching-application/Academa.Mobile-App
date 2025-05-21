@@ -1,11 +1,11 @@
 // domain/entities/live_model.dart
-class LiveModel {
+class LiveStreamingEntity {
   final String rtmpUrl;
   final String liveStreamId;
   final String streamKey;
   final String playbackId;
 
-  LiveModel({
+  LiveStreamingEntity({
     required this.rtmpUrl,
     required this.liveStreamId,
     required this.streamKey,

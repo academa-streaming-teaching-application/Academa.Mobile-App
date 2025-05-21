@@ -1,5 +1,5 @@
-import 'package:academa_streaming_platform/domain/repositories/live_streaming_repositories.dart';
-import '../../domain/entities/live_model.dart';
+import 'package:academa_streaming_platform/domain/repositories/live_streaming_repository.dart';
+import '../../domain/entities/live_streaming_entity.dart';
 import '../../domain/datasource/live_streaming_datasource.dart';
 
 class LiveStreamingRepositoryImpl implements LiveStreamingRepository {
@@ -7,12 +7,12 @@ class LiveStreamingRepositoryImpl implements LiveStreamingRepository {
   LiveStreamingRepositoryImpl(this._ds);
 
   @override
-  Future<LiveModel> createSession(String title) {
+  Future<LiveStreamingEntity> createSession(String title) {
     return _ds.createLiveSession(title);
   }
 
   @override
-  Future<List<LiveModel>> getSessions() {
+  Future<List<LiveStreamingEntity>> getSessions() {
     return _ds.fetchSessions();
   }
 }

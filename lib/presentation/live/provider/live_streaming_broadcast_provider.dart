@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rtmp_broadcaster/camera.dart'; // ← único import
-import '../../../domain/repositories/live_streaming_repositories.dart';
+import 'package:rtmp_broadcaster/camera.dart';
+import '../../../domain/repositories/live_streaming_repository.dart';
 
-class LiveBroadcastProvider extends ChangeNotifier {
-  LiveBroadcastProvider({
+class LiveStreamingBroadcastProvider extends ChangeNotifier {
+  LiveStreamingBroadcastProvider({
     required LiveStreamingRepository repository,
     required this.teacherId,
   }) : _repository = repository;

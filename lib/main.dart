@@ -1,25 +1,31 @@
-import 'package:academa_streaming_platform/data/datasource/live_remote_data_source.dart';
-import 'package:academa_streaming_platform/data/repositories/live_streaming_repository.dart';
-import 'package:academa_streaming_platform/domain/repositories/live_streaming_repositories.dart';
+import 'package:academa_streaming_platform/data/datasource/auth_datasource_impl.dart';
+import 'package:academa_streaming_platform/data/datasource/live_streaming_datasource_impl.dart';
+import 'package:academa_streaming_platform/data/repositories/auth_repository_impl.dart';
+import 'package:academa_streaming_platform/data/repositories/live_streaming_repository_impl.dart';
+import 'package:academa_streaming_platform/domain/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 
 import 'config/router/app_router.dart';
 import 'config/theme/app_theme.dart';
+import 'domain/repositories/live_streaming_repository.dart';
 
 void main() {
-  // ════════════════ Repositorios ════════════════
+  // TODO: CHANGE THIS A ENV VARIABLE
   final dio = Dio(BaseOptions(baseUrl: 'http://192.168.2.52:3000/api/v1'));
 
-  // Streaming
-  final liveDataSource = LiveRemoteDataSource(dio);
+  final liveDataSource = LiveStreamingDataSourceImpl(dio);
   final liveRepo = LiveStreamingRepositoryImpl(liveDataSource);
+
+  final authDataSource = AuthRemoteDataSource(dio);
+  final authRepo = AuthRepositoryImpl(authDataSource);
 
   runApp(
     MultiProvider(
       providers: [
         Provider<LiveStreamingRepository>.value(value: liveRepo),
+        Provider<AuthRepository>.value(value: authRepo)
         // futuros providers aquí
       ],
       child: const MyApp(),

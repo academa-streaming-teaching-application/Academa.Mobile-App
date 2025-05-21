@@ -1,6 +1,5 @@
 import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class SignUpView extends StatelessWidget {
   const SignUpView({super.key});
@@ -54,7 +53,6 @@ class SignUpView extends StatelessWidget {
                 padding: EdgeInsets.only(top: screenHeight * 0.05),
                 child: AuthForm(
                   isSignIn: false,
-                  onSubmitPressed: () => context.go('/home-screen'),
                 ),
               ),
             ],
