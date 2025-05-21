@@ -3,6 +3,7 @@ import 'package:academa_streaming_platform/data/datasource/live_streaming_dataso
 import 'package:academa_streaming_platform/data/repositories/auth_repository_impl.dart';
 import 'package:academa_streaming_platform/data/repositories/live_streaming_repository_impl.dart';
 import 'package:academa_streaming_platform/domain/repositories/user_repository.dart';
+import 'package:academa_streaming_platform/presentation/auth/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,9 @@ void main() {
     MultiProvider(
       providers: [
         Provider<LiveStreamingRepository>.value(value: liveRepo),
-        Provider<AuthRepository>.value(value: authRepo)
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(authRepo),
+        ),
         // futuros providers aquí
       ],
       child: const MyApp(),
