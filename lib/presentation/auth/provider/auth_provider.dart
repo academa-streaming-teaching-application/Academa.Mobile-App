@@ -1,93 +1,121 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:dio/dio.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/repositories/user_repository.dart';
+import 'auth_repositoy_provider.dart';
 
-class AuthProvider extends ChangeNotifier {
-  final AuthRepository _authRepository;
+/*───────────────────────────── STATE ────────────────────────────────*/
+class AuthState {
+  const AuthState({
+    this.user,
+    this.isLoading = false,
+    this.error,
+  });
 
-  AuthProvider(this._authRepository);
+  final UserEntity? user;
+  final bool isLoading;
+  final String? error;
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  final nameController = TextEditingController();
+  AuthState copyWith({
+    UserEntity? user,
+    bool? isLoading,
+    String? error,
+  }) {
+    return AuthState(
+      user: user ?? this.user,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+    );
+  }
+}
 
-  String role = 'student';
-  UserEntity? _user;
-  bool _isLoading = false;
-  String? _error;
+/*──────────────────────── NOTIFIER ─────────────────────────*/
+class AuthNotifier extends Notifier<AuthState> {
+  late AuthRepository _repo;
 
-  UserEntity? get user => _user;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-
-  Future<void> loginWithEmail() async {
-    _setLoading(true);
-    try {
-      _user = await _authRepository.loginWithEmail(
-        emailController.text,
-        passwordController.text,
-      );
-      _error = null;
-    } catch (e) {
-      _error = e.toString();
-    }
-    _setLoading(false);
+  @override
+  AuthState build() {
+    _repo = ref.read(authRepositoryProvider);
+    return const AuthState();
   }
 
-  Future<void> registerWithEmail() async {
-    _setLoading(true);
+  /*-------------- HELPER ----------------*/ // ++ NUEVO
+  String _friendlyMessage(DioException e) {
+    // ++ NUEVO
+    final data = e.response?.data; // ++ NUEVO
+    if (data is Map && data['message'] is String) {
+      // ++ NUEVO
+      return data['message'] as String; // ++ NUEVO
+    } // ++ NUEVO
+    return 'Error de red: ${e.message}'; // ++ NUEVO
+  } // ++ NUEVO
+
+  /*-------------- ACCIONES ----------------*/
+
+  Future<void> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
     try {
-      _user = await _authRepository.registerWithEmail(
-        email: emailController.text,
-        password: passwordController.text,
-        name: nameController.text,
+      final user = await _repo.loginWithEmail(email, password);
+      state = state.copyWith(user: user, isLoading: false);
+    } on DioException catch (e) {
+      // !! CAMBIADO
+      state = state.copyWith(
+          error: _friendlyMessage(e), // !! CAMBIADO
+          isLoading: false); // !! CAMBIADO
+    } catch (e) {
+      state = state.copyWith(error: e.toString(), isLoading: false);
+    }
+  }
+
+  Future<void> registerWithEmail({
+    required String email,
+    required String password,
+    required String name,
+    required String role,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final user = await _repo.registerWithEmail(
+        email: email,
+        password: password,
+        name: name,
         role: role,
       );
-      _error = null;
+      state = state.copyWith(user: user, isLoading: false);
+    } on DioException catch (e) {
+      // !! CAMBIADO
+      state = state.copyWith(
+          error: _friendlyMessage(e), // !! CAMBIADO
+          isLoading: false); // !! CAMBIADO
     } catch (e) {
-      _error = e.toString();
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
-    _setLoading(false);
   }
 
-  Future<void> loginWithGoogle() async {
-    _setLoading(true);
+  Future<void> loginWithGoogle(String role) async {
+    state = state.copyWith(isLoading: true, error: null);
     try {
-      _user = await _authRepository.loginWithGoogle(role);
-      _error = null;
+      final user = await _repo.loginWithGoogle(role);
+      state = state.copyWith(user: user, isLoading: false);
+    } on DioException catch (e) {
+      // !! CAMBIADO
+      state = state.copyWith(
+          error: _friendlyMessage(e), // !! CAMBIADO
+          isLoading: false); // !! CAMBIADO
     } catch (e) {
-      _error = e.toString();
+      state = state.copyWith(error: e.toString(), isLoading: false);
     }
-    _setLoading(false);
   }
 
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
-    _user = null;
-    notifyListeners();
-  }
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  void clearFields() {
-    emailController.clear();
-    passwordController.clear();
-    confirmPasswordController.clear();
-    nameController.clear();
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    nameController.dispose();
-    super.dispose();
+    state = const AuthState();
   }
 }
+
+final authProvider =
+    NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);

@@ -9,12 +9,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserEntity> loginWithGoogle(String role) {
-    return remoteDataSource.loginWithGoogle(role);
+    return remoteDataSource.signInWithGoogle(role);
   }
 
   @override
   Future<UserEntity> loginWithEmail(String email, String password) {
-    return remoteDataSource.loginWithEmail(email, password);
+    return remoteDataSource.signInWithEmail(email, password);
   }
 
   @override
@@ -24,7 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String name,
     required String role,
   }) {
-    return remoteDataSource.registerWithEmail(
+    return remoteDataSource.signUpWithEmail(
       email: email,
       password: password,
       name: name,

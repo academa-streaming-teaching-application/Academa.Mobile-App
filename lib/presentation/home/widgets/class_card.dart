@@ -10,6 +10,8 @@ class ClassCard extends StatelessWidget {
 
   final bool isLiked;
 
+  final String id;
+
   final VoidCallback? onLikeTap;
 
   const ClassCard({
@@ -17,6 +19,7 @@ class ClassCard extends StatelessWidget {
     required this.imagePath,
     required this.title,
     required this.subtitle,
+    required this.id,
     this.isLiked = false,
     this.onLikeTap,
   });
@@ -39,7 +42,7 @@ class ClassCard extends StatelessWidget {
     final cardHeight = size.height * 0.08;
     return Center(
       child: GestureDetector(
-        onTap: () => context.push('/class-view'),
+        onTap: () => context.push('/class-view?id=$id'),
         child: Container(
           width: cardWidth,
           height: double.maxFinite,

@@ -1,3 +1,4 @@
+import 'package:academa_streaming_platform/domain/entities/saved_asset_entity.dart';
 import 'package:dio/dio.dart';
 
 import '../../domain/datasource/live_streaming_datasource.dart';
@@ -10,10 +11,18 @@ class LiveStreamingDataSourceImpl implements LiveStreamingDataSource {
   LiveStreamingDataSourceImpl(this._dio);
 
   @override
-  Future<LiveStreamingEntity> createLiveSession(String teacherId) async {
+  Future<LiveStreamingEntity> createLiveSession({
+    required String classId,
+    required String teacherId,
+    required String title,
+  }) async {
     final response = await _dio.post(
       '/live/start',
-      data: {'teacherId': teacherId},
+      data: {
+        'classId': classId,
+        'teacherId': teacherId,
+        'title': title,
+      },
     );
 
     final dto = LiveStreamingDto.fromJson(response.data);
@@ -27,20 +36,21 @@ class LiveStreamingDataSourceImpl implements LiveStreamingDataSource {
   }
 
   @override
-  Future<List<LiveStreamingEntity>> fetchSessions() async {
-    final response = await _dio.get('/live-sessions');
+  Future<List<SavedAssetEntity>> fetchSavedAssets() async {
+    final response = await _dio.get('/live/assets');
 
-    final dtos = (response.data as List)
-        .map((json) => LiveStreamingDto.fromJson(json))
-        .toList();
+    // Asegúrate de que la estructura es response.data['data']['assets']
+    final List assets = response.data['assets'];
 
-    return dtos
-        .map((dto) => LiveStreamingEntity(
-              rtmpUrl: dto.rtmpUrl,
-              liveStreamId: dto.liveStreamId,
-              streamKey: dto.streamKey,
-              playbackId: dto.playbackId,
-            ))
-        .toList();
+    return assets.map((e) {
+      return SavedAssetEntity(
+        playbackId: e['playbackId'] as String,
+        title: e['title']?.toString(),
+        createdAt: e['createdAt'].toString(),
+        assetId: e['assetId'].toString(),
+        duration: (e['duration'] as num).toDouble(),
+        status: e['status'].toString(),
+      );
+    }).toList();
   }
 }

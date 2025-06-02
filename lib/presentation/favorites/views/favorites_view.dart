@@ -29,7 +29,6 @@ class FavoritesView extends StatelessWidget {
               cardByPropsWidth: double.infinity,
               cardByPropsHeight: 100,
               title: item.title,
-              studentCount: item.studentCount,
               imagePath: item.imagePath,
             );
           },

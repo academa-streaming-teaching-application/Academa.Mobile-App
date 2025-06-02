@@ -32,7 +32,7 @@ class CustomBottomNavigation extends StatelessWidget {
         context.go('/profile-view');
         break;
       case 3:
-        context.go('/live-view'); // navega a CreateLiveScreen
+        context.go('/live-view');
         break;
     }
   }
@@ -100,14 +100,14 @@ class CustomBottomNavigation extends StatelessWidget {
             label: 'Perfil',
             selected: currentIndex == 2,
           ),
-          _buildItem(
-            context,
-            index: 3,
-            outlinedIcon: Icons.videocam_outlined,
-            filledIcon: Icons.videocam_rounded,
-            label: 'Live',
-            selected: currentIndex == 3,
-          ),
+          // _buildItem(
+          //   context,
+          //   index: 3,
+          //   outlinedIcon: Icons.videocam_outlined,
+          //   filledIcon: Icons.videocam_rounded,
+          //   label: 'Live',
+          //   selected: currentIndex == 3,
+          // ),
         ],
       ),
     );

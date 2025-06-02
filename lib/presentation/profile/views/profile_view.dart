@@ -1,5 +1,3 @@
-import 'package:academa_streaming_platform/config/const/banner_test.dart';
-import 'package:academa_streaming_platform/presentation/home/widgets/horizontal_slider.dart';
 import 'package:academa_streaming_platform/presentation/profile/widgets/custom_profile_app_bar.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_button.dart';
@@ -127,11 +125,12 @@ class ProfileView extends StatelessWidget {
                 ),
               ),
             ),
-            HorizontalSlider(
-              cards: keepWatching,
-              height: keepWatchingHeight,
-              horizontalPadding: 32,
-            ),
+            // TODO: Implement the keep watching logic
+            // HorizontalSlider(
+            //   cards: keepWatching,
+            //   height: keepWatchingHeight,
+            //   horizontalPadding: 32,
+            // ),
           ],
         ),
       ),

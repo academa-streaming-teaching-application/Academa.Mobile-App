@@ -4,16 +4,15 @@ class KeepWatchingCard extends StatelessWidget {
   const KeepWatchingCard({
     super.key,
     required this.title,
-    required this.studentCount,
     required this.imagePath,
     this.cardByPropsHeight,
     this.cardByPropsWidth,
+    this.onPlay,
   });
 
   final String title;
-  final int studentCount;
   final String imagePath;
-
+  final VoidCallback? onPlay;
   final double? cardByPropsHeight;
   final double? cardByPropsWidth;
 
@@ -71,11 +70,6 @@ class KeepWatchingCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$studentCount estudiantes',
-                      style: const TextStyle(color: Colors.black54),
-                    ),
                   ],
                 ),
               ),
@@ -86,9 +80,7 @@ class KeepWatchingCard extends StatelessWidget {
                 size: 28,
                 color: colorScheme.primary,
               ),
-              onPressed: () {
-                // TODO: play video
-              },
+              onPressed: onPlay,
             ),
           ],
         ),
