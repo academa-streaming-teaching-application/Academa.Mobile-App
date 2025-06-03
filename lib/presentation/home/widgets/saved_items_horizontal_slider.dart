@@ -1,7 +1,7 @@
 import 'package:academa_streaming_platform/domain/entities/saved_asset_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
-import 'package:academa_streaming_platform/presentation/home/widgets/keep_watching.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watching.dart';
 import 'package:go_router/go_router.dart';
 
 class SavedItemsHorizontalSlider extends StatelessWidget {

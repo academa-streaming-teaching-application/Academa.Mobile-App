@@ -32,25 +32,10 @@ class LiveStreamingDataSourceImpl implements LiveStreamingDataSource {
       liveStreamId: dto.liveStreamId,
       streamKey: dto.streamKey,
       playbackId: dto.playbackId,
+      title: dto.title,
+      teacherId: dto.teacherId,
+      classId: dto.classId,
+      createdAt: dto.createdAt,
     );
-  }
-
-  @override
-  Future<List<SavedAssetEntity>> fetchSavedAssets() async {
-    final response = await _dio.get('/live/assets');
-
-    // Asegúrate de que la estructura es response.data['data']['assets']
-    final List assets = response.data['assets'];
-
-    return assets.map((e) {
-      return SavedAssetEntity(
-        playbackId: e['playbackId'] as String,
-        title: e['title']?.toString(),
-        createdAt: e['createdAt'].toString(),
-        assetId: e['assetId'].toString(),
-        duration: (e['duration'] as num).toDouble(),
-        status: e['status'].toString(),
-      );
-    }).toList();
   }
 }

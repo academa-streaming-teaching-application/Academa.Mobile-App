@@ -19,9 +19,4 @@ class LiveStreamingRepositoryImpl implements LiveStreamingRepository {
       title: title, // ✅ changed
     );
   }
-
-  @override
-  Future<List<SavedAssetEntity>> getSavedAssets() {
-    return _ds.fetchSavedAssets();
-  }
 }

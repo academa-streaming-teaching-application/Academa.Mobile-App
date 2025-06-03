@@ -7,6 +7,4 @@ abstract class LiveStreamingDataSource {
     required String teacherId,
     required String title,
   });
-
-  Future<List<SavedAssetEntity>> fetchSavedAssets();
 }

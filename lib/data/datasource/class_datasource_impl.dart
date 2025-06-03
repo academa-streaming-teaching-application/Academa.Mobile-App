@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../domain/entities/class_entity.dart';
 import '../../domain/datasource/class_datasource.dart';
+import '../../domain/entities/saved_asset_entity.dart';
 
 class ClassDataSourceImpl implements ClassDataSource {
   final Dio dio;
@@ -72,5 +73,41 @@ class ClassDataSourceImpl implements ClassDataSource {
           data['teacher'] is Map ? data['teacher']['_id'] : data['teacher'],
       studentIds: List<String>.from(data['students'] ?? []),
     );
+  }
+
+  @override
+  Future<List<SavedAssetEntity>> fetchSavedAssets() async {
+    final response = await dio.get('/assets');
+
+    final List assets = response.data['assets'];
+
+    return assets.map((e) {
+      return SavedAssetEntity(
+        playbackId: e['playbackId'] as String,
+        title: e['title']?.toString(),
+        createdAt: e['createdAt'].toString(),
+        assetId: e['assetId'].toString(),
+        duration: (e['duration'] as num).toDouble(),
+        status: e['status'].toString(),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<SavedAssetEntity>> fetchSavedAssetsByClassId(String id) async {
+    final response = await dio.get('/assets/$id');
+
+    final List assetsByClassId = response.data['filteredAssets'];
+
+    return assetsByClassId.map((e) {
+      return SavedAssetEntity(
+        playbackId: e['playbackId'] as String,
+        title: e['title']?.toString(),
+        createdAt: e['createdAt'].toString(),
+        assetId: e['assetId'].toString(),
+        duration: (e['duration'] as num).toDouble(),
+        status: e['status'].toString(),
+      );
+    }).toList();
   }
 }
