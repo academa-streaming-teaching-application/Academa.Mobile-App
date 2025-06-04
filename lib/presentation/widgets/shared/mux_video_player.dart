@@ -20,10 +20,31 @@ class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
     super.initState();
     _controller = VideoPlayerController.network(
       'https://stream.mux.com/${widget.playbackId}.m3u8',
-    )..initialize().then((_) {
-        setState(() => _isInitialized = true);
-        _controller.play();
-      });
+    );
+
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    try {
+      await _controller.initialize();
+      setState(() => _isInitialized = true);
+      _controller.play();
+    } catch (e) {
+      debugPrint('❌ Error al inicializar video: $e');
+      await Future.delayed(const Duration(seconds: 2));
+      if (mounted) {
+        Navigator.of(context).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo reproducir el video.'),
+            duration: Duration(seconds: 4),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -46,13 +67,11 @@ class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
       body: _isInitialized
           ? Stack(
               children: [
-                // 👇 Video pantalla completa
                 GestureDetector(
                   onTap: _toggleControls,
                   child: SizedBox.expand(
-                    // 👈 Ocupa toda la pantalla
                     child: FittedBox(
-                      fit: BoxFit.cover, // 👈 Cubre completamente la pantalla
+                      fit: BoxFit.cover,
                       child: SizedBox(
                         width: _controller.value.size.width,
                         height: _controller.value.size.height,
@@ -61,8 +80,6 @@ class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
                     ),
                   ),
                 ),
-
-                // 👇 Controles superpuestos
                 if (_showControls)
                   Positioned.fill(
                     child: Container(

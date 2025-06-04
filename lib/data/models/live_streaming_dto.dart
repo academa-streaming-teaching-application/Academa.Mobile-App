@@ -1,7 +1,3 @@
-// data/models/live_session_dto.dart
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class LiveStreamingDto {
   final String rtmpUrl;
   final String liveStreamId;
@@ -10,7 +6,7 @@ class LiveStreamingDto {
   final String title;
   final String teacherId;
   final String classId;
-  final DateTime createdAt;
+  final String createdAt;
 
   LiveStreamingDto({
     required this.rtmpUrl,
@@ -32,7 +28,7 @@ class LiveStreamingDto {
       title: json['title'] as String,
       teacherId: json['teacherId'] as String,
       classId: json['classId'] as String,
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      createdAt: json['createdAt'] as String,
     );
   }
 

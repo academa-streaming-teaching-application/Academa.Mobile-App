@@ -12,29 +12,8 @@ final liveStreamingRepositoryProvider = Provider<LiveStreamingRepository>(
   (ref) => LiveStreamingRepositoryImpl(
     LiveStreamingDataSourceImpl(
       Dio(
-        BaseOptions(baseUrl: 'http://192.168.1.142:3000/api/v1'),
+        BaseOptions(baseUrl: 'http://192.168.2.43:3000/api/v1'),
       ),
     ),
   ),
 );
-
-final activeLiveStreamsProvider =
-    StreamProvider<List<LiveStreamingEntity>>((ref) {
-  return FirebaseFirestore.instance
-      .collection('active_livestreams')
-      .orderBy('createdAt', descending: true)
-      .snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) {
-            final dto = LiveStreamingDto.fromJson(doc.data());
-            return LiveStreamingEntity(
-              rtmpUrl: dto.rtmpUrl,
-              liveStreamId: dto.liveStreamId,
-              streamKey: dto.streamKey,
-              playbackId: dto.playbackId,
-              title: dto.title,
-              teacherId: dto.teacherId,
-              classId: dto.classId,
-              createdAt: dto.createdAt,
-            );
-          }).toList());
-});

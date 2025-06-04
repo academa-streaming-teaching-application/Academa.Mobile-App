@@ -97,14 +97,18 @@ class LiveStreamingNotifier
       final session = await _repo.createSession(
         teacherId: _params.teacherId,
         classId: _params.classId,
-        title: title, // ← usamos el título actualizado
+        title: title,
       );
 
       final url = '${session.rtmpUrl}/${session.streamKey}';
+
+      print('🎥 Starting RTMP streaming to: $url');
+
       await state.camera!.startVideoStreaming(url, androidUseOpenGL: true);
 
       state = state.copyWith(isStreaming: true);
     } catch (e) {
+      print('elgueso $e');
       state = state.copyWith(error: 'Falló RTMP: $e');
     } finally {
       state = state.copyWith(starting: false);

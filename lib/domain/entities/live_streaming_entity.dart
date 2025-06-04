@@ -7,7 +7,7 @@ class LiveStreamingEntity {
   final String title;
   final String teacherId;
   final String classId;
-  final DateTime createdAt;
+  final String createdAt;
 
   LiveStreamingEntity({
     required this.rtmpUrl,

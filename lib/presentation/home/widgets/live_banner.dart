@@ -1,6 +1,8 @@
 import 'package:academa_streaming_platform/domain/entities/class_entity.dart';
+import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LiveBanner extends StatelessWidget {
   final String title;
@@ -92,13 +94,15 @@ class LiveBanner extends StatelessWidget {
   }
 }
 
-class LiveBannerSwiper extends StatelessWidget {
-  final List<ClassEntity> banners;
+class LiveStreamSwiper extends StatelessWidget {
+  // ⬅️
+  final List<LiveStreamingEntity> liveStreams;
   final double height;
 
-  const LiveBannerSwiper({
+  const LiveStreamSwiper({
+    // ⬅️
     super.key,
-    required this.banners,
+    required this.liveStreams,
     this.height = 210.0,
   });
 
@@ -114,19 +118,20 @@ class LiveBannerSwiper extends StatelessWidget {
         viewportFraction: 1,
         scale: 0.95,
         autoplay: true,
-        itemCount: banners.length,
+        itemCount: liveStreams.length,
         itemBuilder: (context, index) {
-          final classEntity = banners[index];
-          return SizedBox(
-            width: screenWidth,
-            height: height,
+          final stream = liveStreams[index];
+
+          return GestureDetector(
+            // ⬅️
+            onTap: () =>
+                context.push('/player?playbackId=${stream.playbackId}'),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: LiveBanner(
-                title: classEntity.title,
-                subtitle: classEntity.description ?? 'Clase en vivo',
-                imageUrl:
-                    'lib/config/assets/productivity_square.png', // puedes usar otro valor real
+                title: stream.title,
+                subtitle: 'Clase en vivo',
+                imageUrl: 'lib/config/assets/productivity_square.png',
               ),
             ),
           );

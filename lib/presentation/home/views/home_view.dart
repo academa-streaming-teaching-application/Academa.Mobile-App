@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:academa_streaming_platform/presentation/home/widgets/class_filters.dart';
 import 'package:academa_streaming_platform/presentation/home/widgets/horizontal_slider.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
-import '../../providers/saved_asset_provider.dart';
+import '../../providers/class_repository_provider.dart';
 import '../provider/class_repository_provider.dart';
 import '../widgets/live_banner.dart';
 import '../widgets/custom_app_bar.dart';
@@ -37,6 +37,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     final classAsync = ref.watch(fetchAllClassesProvider);
     final savedItemsAsync = ref.watch(fetchAllSavedItemsProvider);
+    final activeLives = ref.watch(activeLiveStreamsProvider);
     print("$savedItemsAsync");
 
     return Scaffold(
@@ -53,7 +54,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LiveBannerSwiper(banners: classes),
+                    activeLives.when(
+                      // ⬅️ REPLACED: LiveBannerSwiper for real-time data
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (e, _) => Center(child: Text('Error: $e')),
+                      data: (liveStreams) {
+                        if (liveStreams.isEmpty) {
+                          return const SizedBox();
+                        }
+                        return LiveStreamSwiper(liveStreams: liveStreams);
+                      },
+                    ),
                     const SizedBox(height: 16),
                     FilterBar(
                       filters: _filters,

@@ -1,5 +1,5 @@
 import 'package:academa_streaming_platform/domain/entities/saved_asset_entity.dart';
-import 'package:academa_streaming_platform/presentation/providers/saved_asset_provider.dart';
+import 'package:academa_streaming_platform/presentation/providers/class_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/class_entity.dart';
 
