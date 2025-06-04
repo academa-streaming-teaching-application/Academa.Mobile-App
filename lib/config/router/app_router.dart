@@ -138,5 +138,31 @@ final appRouter = GoRouter(
         );
       },
     ),
+
+    // GoRoute(
+    //   path: '/player',
+    //   pageBuilder: (context, state) {
+    //     final playbackId = state.uri.queryParameters['playbackId'];
+    //     final liveStreamId = state.uri.queryParameters['liveStreamId'];
+    //     final teacherName = state.uri.queryParameters['teacherName'];
+    //     final avatarUrl = state.uri.queryParameters['avatarUrl'];
+    //     final title = state.uri.queryParameters['title'];
+
+    //     return CustomTransitionPage(
+    //       key: state.pageKey,
+    //       child: LiveStreamWatchScreen(
+    //         playbackId: playbackId ?? '',
+    //         liveStreamId: liveStreamId ?? '',
+    //         teacherName: teacherName ?? 'Anónimo',
+    //         avatarUrl: 'lib/config/assets/productivity_square.png',
+    //         title: title ?? '',
+    //       ),
+    //       transitionDuration: const Duration(milliseconds: 400),
+    //       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //         return FadeTransition(opacity: animation, child: child);
+    //       },
+    //     );
+    //   },
+    // ),
   ],
 );

@@ -1,3 +1,6 @@
+import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_chat_list.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_message_input.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_video_header.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -7,7 +10,7 @@ class MuxVideoPlayer extends StatefulWidget {
   const MuxVideoPlayer({Key? key, required this.playbackId}) : super(key: key);
 
   @override
-  _MuxVideoPlayerState createState() => _MuxVideoPlayerState();
+  State<MuxVideoPlayer> createState() => _MuxVideoPlayerState();
 }
 
 class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
@@ -35,11 +38,9 @@ class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
       await Future.delayed(const Duration(seconds: 2));
       if (mounted) {
         Navigator.of(context).pop();
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('No se pudo reproducir el video.'),
-            duration: Duration(seconds: 4),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -53,88 +54,115 @@ class _MuxVideoPlayerState extends State<MuxVideoPlayer> {
     super.dispose();
   }
 
-  void _toggleControls() {
-    setState(() => _showControls = !_showControls);
-  }
-
-  void _goBack() {
-    Navigator.of(context).maybePop();
-  }
+  void _toggleControls() => setState(() => _showControls = !_showControls);
+  void _goBack() => Navigator.of(context).maybePop();
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: _isInitialized
-          ? Stack(
-              children: [
-                GestureDetector(
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          _isInitialized
+              ? GestureDetector(
                   onTap: _toggleControls,
-                  child: SizedBox.expand(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: _controller.value.size.width,
-                        height: _controller.value.size.height,
-                        child: VideoPlayer(_controller),
-                      ),
-                    ),
-                  ),
-                ),
-                if (_showControls)
-                  Positioned.fill(
-                    child: Container(
-                      color: Colors.black38,
-                      child: Column(
-                        children: [
-                          SafeArea(
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_back,
-                                    color: Colors.white),
-                                onPressed: _goBack,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final width = constraints.maxWidth;
+                      final ratio = _controller.value.aspectRatio;
+                      double naturalH = width / ratio; // alto natural
+                      final maxH = screen.height * 0.35; // 30 %
+                      if (naturalH > maxH) naturalH = maxH;
+
+                      return SizedBox(
+                        width: width,
+                        height: naturalH,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            VideoPlayer(_controller),
+                            if (_showControls)
+                              Container(
+                                color: Colors.black38,
+                                child: Stack(
+                                  children: [
+                                    SafeArea(
+                                      child: Align(
+                                        alignment: Alignment.topLeft,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.arrow_back,
+                                              color: Colors.white),
+                                          onPressed: _goBack,
+                                        ),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 12),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                _controller.value.isPlaying
+                                                    ? Icons.pause
+                                                    : Icons.play_arrow,
+                                                color: Colors.white,
+                                                size: 32,
+                                              ),
+                                              onPressed: () => setState(() {
+                                                _controller.value.isPlaying
+                                                    ? _controller.pause()
+                                                    : _controller.play();
+                                              }),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            IconButton(
+                                              icon: const Icon(Icons.replay,
+                                                  color: Colors.white,
+                                                  size: 28),
+                                              onPressed: () => _controller
+                                                  .seekTo(Duration.zero),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-                          const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    _controller.value.isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _controller.value.isPlaying
-                                          ? _controller.pause()
-                                          : _controller.play();
-                                    });
-                                  },
-                                ),
-                                const SizedBox(width: 16),
-                                IconButton(
-                                  icon: const Icon(Icons.replay,
-                                      color: Colors.white, size: 28),
-                                  onPressed: () =>
-                                      _controller.seekTo(Duration.zero),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-              ],
-            )
-          : const Center(child: CircularProgressIndicator()),
+                )
+              : SizedBox(
+                  height: screen.height * 0.35,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+
+          // ───────────── Aquí, debajo, puedes añadir otros widgets ─────────────
+          LiveVideoHeader(
+            avatarUrl: 'lib/config/assets/productivity_square.png',
+            name: 'Hugo Duque',
+            title: 'Math',
+          ),
+          Expanded(
+            child: LiveChatList(
+              liveStreamId: widget.playbackId,
+            ),
+          ),
+          LiveMessageInput(
+            liveStreamId: widget.playbackId,
+          ),
+        ],
+      ),
     );
   }
 }
