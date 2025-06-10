@@ -5,6 +5,7 @@ class ClassEntity {
   final String? type;
   final String? teacherId;
   final List<String>? studentIds;
+  final bool isFollowed;
 
   ClassEntity({
     required this.id,
@@ -13,5 +14,6 @@ class ClassEntity {
     this.type,
     this.teacherId,
     this.studentIds,
+    this.isFollowed = false,
   });
 }

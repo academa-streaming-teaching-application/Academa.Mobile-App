@@ -90,19 +90,14 @@ class ClassCard extends StatelessWidget {
                 top: 8,
                 right: 8,
                 child: GestureDetector(
-                  onTap: onLikeTap,
-                  child: Container(
-                    //TODO: Add the statefull logo bg
-                    // decoration: BoxDecoration(
-                    //   color: Colors.white70,
-                    //   shape: BoxShape.circle,
-                    // ),
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      size: _iconSize,
-                      color: isLiked ? Colors.redAccent : Colors.white,
-                    ),
+                  onTap: () {
+                    onLikeTap?.call(); // ✨
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Icon(
+                    isLiked ? Icons.favorite : Icons.favorite_border,
+                    size: _iconSize,
+                    color: isLiked ? Colors.redAccent : Colors.white,
                   ),
                 ),
               ),

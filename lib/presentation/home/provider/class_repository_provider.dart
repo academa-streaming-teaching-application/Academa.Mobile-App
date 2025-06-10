@@ -5,10 +5,12 @@ import 'package:academa_streaming_platform/presentation/providers/class_reposito
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:academa_streaming_platform/domain/entities/class_entity.dart';
+import '../../auth/provider/auth_provider.dart';
 
 final fetchAllClassesProvider = FutureProvider<List<ClassEntity>>((ref) async {
   final repository = ref.watch(classRepositoryProvider);
-  return repository.getAllClasses();
+  final uid = ref.watch(authProvider).user?.id;
+  return repository.getAllClasses(userId: uid);
 });
 
 final fetchAllSavedItemsProvider =

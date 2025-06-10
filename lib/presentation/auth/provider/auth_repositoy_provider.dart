@@ -8,7 +8,7 @@ final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(
     AuthDataSourceImpl(
       Dio(
-        BaseOptions(baseUrl: 'http://192.168.1.126:3000/api/v1/auth'),
+        BaseOptions(baseUrl: 'http://192.168.2.43:3000/api/v1/auth'),
       ),
     ),
   ),

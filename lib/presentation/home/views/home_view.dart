@@ -1,10 +1,10 @@
 import 'package:academa_streaming_platform/presentation/home/widgets/saved_items_horizontal_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:academa_streaming_platform/presentation/home/widgets/class_filters.dart';
+// import 'package:academa_streaming_platform/presentation/home/widgets/class_filters.dart';
 import 'package:academa_streaming_platform/presentation/home/widgets/horizontal_slider.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
-import '../../providers/class_repository_provider.dart';
+// import '../../providers/class_repository_provider.dart';
 import '../provider/class_repository_provider.dart';
 import '../widgets/live_banner.dart';
 import '../widgets/custom_app_bar.dart';
@@ -17,17 +17,17 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  int _selectedFilterIndex = 0;
+  // int _selectedFilterIndex = 0;
 
-  static const List<String> _filters = [
-    'Todas',
-    'Matemáticas',
-    'Ciencia',
-    'Arte',
-    'Historia',
-    'Tecnología',
-    'Deportes',
-  ];
+  // static const List<String> _filters = [
+  //   'Todas',
+  //   'Matemáticas',
+  //   'Ciencia',
+  //   'Arte',
+  //   'Historia',
+  //   'Tecnología',
+  //   'Deportes',
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     activeLives.when(
-                      // ⬅️ REPLACED: LiveBannerSwiper for real-time data
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
                       error: (e, _) => Center(child: Text('Error: $e')),
@@ -66,12 +65,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         return LiveStreamSwiper(liveStreams: liveStreams);
                       },
                     ),
-                    const SizedBox(height: 16),
-                    FilterBar(
-                      filters: _filters,
-                      selectedIndex: _selectedFilterIndex,
-                      onTap: (i) => setState(() => _selectedFilterIndex = i),
-                    ),
+                    // const SizedBox(height: 16),
+                    // TODO: Add filtered logic
+                    // FilterBar(
+                    //   filters: _filters,
+                    //   selectedIndex: _selectedFilterIndex,
+                    //   onTap: (i) => setState(() => _selectedFilterIndex = i),
+                    // ),
                     const SizedBox(height: 8),
                     HorizontalSlider(
                       cards: classes,

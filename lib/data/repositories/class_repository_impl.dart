@@ -9,8 +9,8 @@ class ClassRepositoryImpl implements ClassRepository {
   ClassRepositoryImpl(this.dataSource);
 
   @override
-  Future<List<ClassEntity>> getAllClasses() {
-    return dataSource.getAllClasses();
+  Future<List<ClassEntity>> getAllClasses({String? userId}) {
+    return dataSource.getAllClasses(userId: userId);
   }
 
   @override
@@ -36,5 +36,11 @@ class ClassRepositoryImpl implements ClassRepository {
   @override
   Future<List<SavedAssetEntity>> getSavedAssetsByClassId(String id) {
     return dataSource.fetchSavedAssetsByClassId(id);
+  }
+
+  @override
+  Future<bool> follow(String classId,
+      {required String userId, required bool follow}) {
+    return dataSource.follow(classId, userId: userId, follow: follow);
   }
 }

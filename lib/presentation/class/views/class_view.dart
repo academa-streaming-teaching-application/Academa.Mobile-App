@@ -1,9 +1,9 @@
 import 'package:academa_streaming_platform/presentation/class/widgets/custom_class_view_app_bar.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/custom_button.dart';
+import 'package:academa_streaming_platform/presentation/home/provider/follow_provider.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watching.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watching.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
 import 'package:go_router/go_router.dart';
 
 import '../provider/class_by_id_provider.dart';
@@ -31,8 +31,6 @@ class ClassView extends ConsumerWidget {
     final savedAssetsAsync =
         ref.watch(fetchSavedAssetsByClassIdProvider(classId));
 
-    final size = MediaQuery.of(context).size;
-
     return classAsync.when(
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -41,6 +39,11 @@ class ClassView extends ConsumerWidget {
         body: Center(child: Text('Error: $e')),
       ),
       data: (classData) {
+        // ---------- estado de follow ----------
+        final likedIds = ref.watch(followProvider).value ?? <String>{}; // ✨
+        final isFollowed = likedIds.contains(classData.id); // ✨
+        final size = MediaQuery.of(context).size; // ✨
+
         return savedAssetsAsync.when(
           loading: () => const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -51,9 +54,9 @@ class ClassView extends ConsumerWidget {
           data: (savedAssets) => Scaffold(
             backgroundColor: Colors.black,
             appBar: CustomClassViewAppBar(
-              title: classData.type!,
+              title: classData.type ?? '',
               classId: classData.id,
-              teacherId: classData.teacherId!,
+              teacherId: classData.teacherId ?? '',
             ),
             body: CustomBodyContainer(
               child: Column(
@@ -72,33 +75,29 @@ class ClassView extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Container(
-                          width: size.width * 0.2,
-                          height: size.height * 0.04,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFB300FF),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Siguiendo',
-                              style: _liveLabelStyle,
+                        GestureDetector(
+                          // ✨
+                          onTap: () => ref
+                              .read(followProvider.notifier)
+                              .toggle(classData.id), // ✨
+                          child: Container(
+                            width: size.width * 0.2,
+                            height: size.height * 0.04,
+                            decoration: BoxDecoration(
+                              color: isFollowed
+                                  ? const Color(0xFFB300FF) // ✨
+                                  : Colors.black, // ✨
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                isFollowed ? 'Siguiendo' : 'Seguir', // ✨
+                                style: _liveLabelStyle,
+                              ),
                             ),
                           ),
-                        )
+                        ),
                       ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: CustomButton(
-                      text: 'LIVE - PARAMETRIZACIÓN',
-                      textColor: Colors.white,
-                      backgroundColor: Colors.black,
-                      textSize: 16,
-                      buttonWidth: size.width,
-                      buttonHeight: size.height * 0.07,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),

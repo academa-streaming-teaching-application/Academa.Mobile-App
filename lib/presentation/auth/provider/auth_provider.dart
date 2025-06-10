@@ -62,10 +62,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final user = await _repo.loginWithEmail(email, password);
       state = state.copyWith(user: user, isLoading: false);
     } on DioException catch (e) {
-      // !! CAMBIADO
-      state = state.copyWith(
-          error: _friendlyMessage(e), // !! CAMBIADO
-          isLoading: false); // !! CAMBIADO
+      state = state.copyWith(error: _friendlyMessage(e), isLoading: false);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
@@ -87,10 +84,7 @@ class AuthNotifier extends Notifier<AuthState> {
       );
       state = state.copyWith(user: user, isLoading: false);
     } on DioException catch (e) {
-      // !! CAMBIADO
-      state = state.copyWith(
-          error: _friendlyMessage(e), // !! CAMBIADO
-          isLoading: false); // !! CAMBIADO
+      state = state.copyWith(error: _friendlyMessage(e), isLoading: false);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }
@@ -102,10 +96,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final user = await _repo.loginWithGoogle(role);
       state = state.copyWith(user: user, isLoading: false);
     } on DioException catch (e) {
-      // !! CAMBIADO
-      state = state.copyWith(
-          error: _friendlyMessage(e), // !! CAMBIADO
-          isLoading: false); // !! CAMBIADO
+      state = state.copyWith(error: _friendlyMessage(e), isLoading: false);
     } catch (e) {
       state = state.copyWith(error: e.toString(), isLoading: false);
     }

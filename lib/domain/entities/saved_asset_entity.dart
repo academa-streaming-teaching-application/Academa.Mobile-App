@@ -8,7 +8,8 @@ class SavedAssetEntity {
   final String createdAt;
   final String? title;
 
-  SavedAssetEntity({
+  const SavedAssetEntity({
+    // ✨  added const
     required this.assetId,
     required this.playbackId,
     required this.duration,
@@ -19,12 +20,12 @@ class SavedAssetEntity {
 
   factory SavedAssetEntity.fromJson(Map<String, dynamic> json) {
     return SavedAssetEntity(
-      assetId: json['assetId'] as String,
-      playbackId: json['playbackId'] as String,
-      duration: (json['duration'] as num).toDouble(),
-      status: json['status'] as String,
-      createdAt: json['createdAt'] as String,
-      title: json['title']?.toString(), // ✅ manejo seguro de null
+      assetId: (json['assetId'] as String?) ?? '',
+      playbackId: (json['playbackId'] as String?) ?? '',
+      duration: (json['duration'] as num?)?.toDouble() ?? 0.0,
+      status: (json['status'] as String?) ?? '',
+      createdAt: (json['createdAt'] as String?) ?? '',
+      title: json['title'] as String?,
     );
   }
 }

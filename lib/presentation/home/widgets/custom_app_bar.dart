@@ -1,4 +1,4 @@
-import 'package:academa_streaming_platform/presentation/home/widgets/search_delegate.dart';
+import 'package:academa_streaming_platform/presentation/home/widgets/search_class_delegate.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -90,9 +90,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: _bottomPadding,
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onTap: () => showSearch<String>(
+            onTap: () => showSearch<void>(                     // ✨ <String> → <void>
               context: context,
-              delegate: MySearchDelegate(),
+              delegate: SearchClassDelegate(),                // ✨ nombre del delegate
             ),
             child: Container(
               height: _searchBoxHeight,

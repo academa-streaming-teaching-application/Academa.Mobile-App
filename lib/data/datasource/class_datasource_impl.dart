@@ -9,7 +9,7 @@ class ClassDataSourceImpl implements ClassDataSource {
   ClassDataSourceImpl(this.dio);
 
   @override
-  Future<List<ClassEntity>> getAllClasses() async {
+  Future<List<ClassEntity>> getAllClasses({String? userId}) async {
     final response = await dio.get("");
     final List classes = response.data['data']['classes'];
 
@@ -21,6 +21,8 @@ class ClassDataSourceImpl implements ClassDataSource {
               type: e['type'],
               teacherId: e['teacher'],
               studentIds: List<String>.from(e['students'] ?? []),
+              isFollowed:
+                  userId != null && (e['students'] ?? []).contains(userId), // ✨
             ))
         .toList();
   }
@@ -83,12 +85,12 @@ class ClassDataSourceImpl implements ClassDataSource {
 
     return assets.map((e) {
       return SavedAssetEntity(
-        playbackId: e['playbackId'] as String,
-        title: e['title']?.toString(),
-        createdAt: e['createdAt'].toString(),
-        assetId: e['assetId'].toString(),
-        duration: (e['duration'] as num).toDouble(),
-        status: e['status'].toString(),
+        playbackId: (e['playbackId'] as String?) ?? '', // ✨
+        title: e['title'] as String?, // ✨
+        createdAt: (e['createdAt'] as String?) ?? '', // ✨
+        assetId: (e['assetId'] as String?) ?? '', // ✨
+        duration: (e['duration'] as num?)?.toDouble() ?? 0.0, // ✨ null-safe
+        status: (e['status'] as String?) ?? '', // ✨
       );
     }).toList();
   }
@@ -101,13 +103,26 @@ class ClassDataSourceImpl implements ClassDataSource {
 
     return assetsByClassId.map((e) {
       return SavedAssetEntity(
-        playbackId: e['playbackId'] as String,
-        title: e['title']?.toString(),
-        createdAt: e['createdAt'].toString(),
-        assetId: e['assetId'].toString(),
-        duration: (e['duration'] as num).toDouble(),
-        status: e['status'].toString(),
+        playbackId: (e['playbackId'] as String?) ?? '', // ✨
+        title: e['title'] as String?, // ✨
+        createdAt: (e['createdAt'] as String?) ?? '', // ✨
+        assetId: (e['assetId'] as String?) ?? '', // ✨
+        duration: (e['duration'] as num?)?.toDouble() ?? 0.0, // ✨ null-safe
+        status: (e['status'] as String?) ?? '', // ✨
       );
     }).toList();
+  }
+
+  @override
+  Future<bool> follow(String classId,
+      {required String userId, required bool follow}) async {
+    await dio.patch(
+      '/follow/$classId',
+      data: {
+        'follow': follow,
+        'userId': userId,
+      },
+    );
+    return follow;
   }
 }
