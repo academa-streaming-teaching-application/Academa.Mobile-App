@@ -8,7 +8,7 @@ final classRepositoryProvider = Provider<ClassRepository>(
   (ref) => ClassRepositoryImpl(
     ClassDataSourceImpl(
       Dio(
-        BaseOptions(baseUrl: 'http://192.168.2.43:3000/api/v1/class'),
+        BaseOptions(baseUrl: 'http://192.168.1.113:3000/api/v1/class'),
       ),
     ),
   ),

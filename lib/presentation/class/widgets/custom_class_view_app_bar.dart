@@ -6,11 +6,13 @@ class CustomClassViewAppBar extends StatelessWidget
   final String title;
   final String classId;
   final String teacherId;
+  final String userRole;
   const CustomClassViewAppBar({
     super.key,
     required this.title,
-    required this.classId, // ✅
-    required this.teacherId, // ✅
+    required this.classId,
+    required this.teacherId,
+    required this.userRole,
   });
 
   static const TextStyle _titleStyle = TextStyle(
@@ -42,15 +44,16 @@ class CustomClassViewAppBar extends StatelessWidget
         ),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: _iconBg,
-          child: IconButton(
-            icon: const Icon(Icons.video_call_outlined, color: Colors.white),
-            onPressed: () => context
-                .push('/live-view?classId=$classId&teacherId=$teacherId'),
+        if (userRole == 'teacher')
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: _iconBg,
+            child: IconButton(
+              icon: const Icon(Icons.video_call_outlined, color: Colors.white),
+              onPressed: () => context
+                  .push('/live-view?classId=$classId&teacherId=$teacherId'),
+            ),
           ),
-        ),
       ],
     );
   }

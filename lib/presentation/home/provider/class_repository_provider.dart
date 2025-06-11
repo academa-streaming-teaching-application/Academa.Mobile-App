@@ -19,6 +19,14 @@ final fetchAllSavedItemsProvider =
   return repository.getSavedAssets();
 });
 
+final fetchClassesByTeacherProvider =
+    FutureProvider.family.autoDispose<List<ClassEntity>, String>(
+  (ref, teacherId) {
+    final repo = ref.watch(classRepositoryProvider);
+    return repo.getClassesByUser(teacherId);
+  },
+);
+
 final activeLiveStreamsProvider =
     StreamProvider<List<LiveStreamingEntity>>((ref) {
   return FirebaseFirestore.instance

@@ -22,12 +22,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     required String name,
+    required String lastName,
     required String role,
   }) {
     return remoteDataSource.signUpWithEmail(
       email: email,
       password: password,
       name: name,
+      lastName: lastName,
       role: role,
     );
   }

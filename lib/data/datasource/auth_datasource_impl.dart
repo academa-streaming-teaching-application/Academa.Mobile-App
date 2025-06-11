@@ -31,6 +31,7 @@ class AuthDataSourceImpl implements AuthDataSource {
       data: {
         'providerId': user.uid,
         'name': user.displayName,
+        'lastName': user.displayName,
         'email': user.email,
         'image': user.photoURL,
         'role': role,
@@ -43,6 +44,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     return UserEntity(
       id: response.data['_id'],
       name: response.data['name'],
+      lastName: response.data['lastName'],
       email: response.data['email'],
       image: response.data['image'] ?? '',
       role: response.data['role'],
@@ -71,6 +73,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     return UserEntity(
       id: response.data['_id'],
       name: response.data['name'],
+      lastName: response.data['lastName'],
       email: response.data['email'],
       image: response.data['image'] ?? '',
       role: response.data['role'],
@@ -82,6 +85,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     required String email,
     required String password,
     required String name,
+    required String lastName,
     required String role,
   }) async {
     final userCredential = await FirebaseAuth.instance
@@ -95,6 +99,7 @@ class AuthDataSourceImpl implements AuthDataSource {
         'firebaseId': user.uid,
         'email': user.email,
         'name': name,
+        'lastName': lastName,
         'image': null,
         'role': role,
       },
@@ -106,6 +111,7 @@ class AuthDataSourceImpl implements AuthDataSource {
     return UserEntity(
       id: response.data['_id'],
       name: response.data['name'],
+      lastName: response.data['lastName'],
       email: response.data['email'],
       image: response.data['image'] ?? '',
       role: response.data['role'],

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
-  const CustomBottomNavigation({super.key});
+  final String userRole;
+  const CustomBottomNavigation({
+    super.key,
+    required this.userRole,
+  });
 
   int getCurrentIndex(BuildContext context) {
     final String path = GoRouterState.of(context).fullPath!;
@@ -14,7 +18,7 @@ class CustomBottomNavigation extends StatelessWidget {
       case '/profile-view':
         return 2;
       case '/live-view':
-        return 3; // nuevo caso
+        return 3;
       default:
         return 0;
     }
@@ -84,14 +88,15 @@ class CustomBottomNavigation extends StatelessWidget {
             label: 'Inicio',
             selected: currentIndex == 0,
           ),
-          _buildItem(
-            context,
-            index: 1,
-            outlinedIcon: Icons.turned_in_not,
-            filledIcon: Icons.turned_in,
-            label: 'Guardados',
-            selected: currentIndex == 1,
-          ),
+          if (userRole == 'student')
+            _buildItem(
+              context,
+              index: 1,
+              outlinedIcon: Icons.turned_in_not,
+              filledIcon: Icons.turned_in,
+              label: 'Guardados',
+              selected: currentIndex == 1,
+            ),
           _buildItem(
             context,
             index: 2,

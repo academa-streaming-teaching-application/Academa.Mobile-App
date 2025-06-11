@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/shared/custom_button.dart';
 import '../provider/auth_provider.dart';
-import 'labeled_fields.dart';
+import '../../widgets/shared/labeled_fields.dart';
 import 'separator.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
@@ -21,7 +21,8 @@ class _AuthFormState extends ConsumerState<AuthForm> {
   final _pass = TextEditingController();
   final _confirm = TextEditingController();
   final _name = TextEditingController();
-  String _role = 'student';
+  final _lastName = TextEditingController();
+  String _role = 'teacher';
 
   /*-------------------- estilos/const ---------------------*/
   static const _gap16 = SizedBox(height: 16);
@@ -108,19 +109,6 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                   obscure: true,
                 ),
                 _gap16,
-                DropdownButtonFormField<String>(
-                  value: _role,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Rol',
-                      labelStyle: TextStyle(color: Colors.white)),
-                  items: const [
-                    DropdownMenuItem(
-                        value: 'student', child: Text('Estudiante')),
-                    DropdownMenuItem(value: 'teacher', child: Text('Profesor')),
-                  ],
-                  onChanged: (v) => _role = v ?? 'student',
-                ),
               ],
               _gap42,
               CustomButton(
@@ -144,6 +132,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                       email: _email.text.trim(),
                       password: _pass.text,
                       name: _name.text,
+                      lastName: _lastName.text,
                       role: _role,
                     );
                   }

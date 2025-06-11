@@ -1,3 +1,4 @@
+import 'package:academa_streaming_platform/presentation/auth/provider/auth_provider.dart';
 import 'package:academa_streaming_platform/presentation/class/widgets/custom_class_view_app_bar.dart';
 import 'package:academa_streaming_platform/presentation/home/provider/follow_provider.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
@@ -5,7 +6,6 @@ import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watc
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../provider/class_by_id_provider.dart';
 
 class ClassView extends ConsumerWidget {
@@ -20,6 +20,10 @@ class ClassView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final classId = GoRouterState.of(context).uri.queryParameters['id'];
+
+    final userRole = ref.watch(
+      authProvider.select((s) => s.user?.role ?? ''),
+    );
 
     if (classId == null) {
       return const Scaffold(
@@ -54,10 +58,10 @@ class ClassView extends ConsumerWidget {
           data: (savedAssets) => Scaffold(
             backgroundColor: Colors.black,
             appBar: CustomClassViewAppBar(
-              title: classData.type ?? '',
-              classId: classData.id,
-              teacherId: classData.teacherId ?? '',
-            ),
+                title: classData.type ?? '',
+                classId: classData.id,
+                teacherId: classData.teacherId ?? '',
+                userRole: userRole),
             body: CustomBodyContainer(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
