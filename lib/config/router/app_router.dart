@@ -7,6 +7,7 @@ import 'package:academa_streaming_platform/presentation/favorites/views/favorite
 import 'package:academa_streaming_platform/presentation/home/views/home_view.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:academa_streaming_platform/presentation/screens/main_screen.dart';
+import 'package:academa_streaming_platform/presentation/widgets/shared/mux_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -122,5 +123,46 @@ final appRouter = GoRouter(
         },
       ),
     ),
+    GoRoute(
+      path: '/player',
+      pageBuilder: (context, state) {
+        final playbackId = state.uri.queryParameters['playbackId'];
+
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: MuxVideoPlayer(playbackId: playbackId ?? ''),
+          transitionDuration: const Duration(milliseconds: 400),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        );
+      },
+    ),
+
+    // GoRoute(
+    //   path: '/player',
+    //   pageBuilder: (context, state) {
+    //     final playbackId = state.uri.queryParameters['playbackId'];
+    //     final liveStreamId = state.uri.queryParameters['liveStreamId'];
+    //     final teacherName = state.uri.queryParameters['teacherName'];
+    //     final avatarUrl = state.uri.queryParameters['avatarUrl'];
+    //     final title = state.uri.queryParameters['title'];
+
+    //     return CustomTransitionPage(
+    //       key: state.pageKey,
+    //       child: LiveStreamWatchScreen(
+    //         playbackId: playbackId ?? '',
+    //         liveStreamId: liveStreamId ?? '',
+    //         teacherName: teacherName ?? 'Anónimo',
+    //         avatarUrl: 'lib/config/assets/productivity_square.png',
+    //         title: title ?? '',
+    //       ),
+    //       transitionDuration: const Duration(milliseconds: 400),
+    //       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //         return FadeTransition(opacity: animation, child: child);
+    //       },
+    //     );
+    //   },
+    // ),
   ],
 );

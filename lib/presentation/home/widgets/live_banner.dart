@@ -1,17 +1,20 @@
+import 'package:academa_streaming_platform/domain/entities/class_entity.dart';
+import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LiveBanner extends StatelessWidget {
-  final String imagePath;
   final String title;
   final String subtitle;
+  final String imageUrl;
   final double height;
 
   const LiveBanner({
     super.key,
-    required this.imagePath,
     required this.title,
     required this.subtitle,
+    required this.imageUrl,
     this.height = 200,
   });
 
@@ -20,10 +23,12 @@ class LiveBanner extends StatelessWidget {
     fontSize: 24,
     fontWeight: FontWeight.bold,
   );
+
   static const TextStyle _subtitleStyle = TextStyle(
     color: Colors.white70,
     fontSize: 16,
   );
+
   static const TextStyle _liveLabelStyle = TextStyle(
     color: Colors.white,
     fontSize: 14,
@@ -40,7 +45,7 @@ class LiveBanner extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.asset(
-              imagePath,
+              imageUrl,
               fit: BoxFit.cover,
             ),
             Container(
@@ -57,7 +62,10 @@ class LiveBanner extends StatelessWidget {
                 children: [
                   Text(title, style: _titleStyle),
                   const SizedBox(height: 8),
-                  Text(subtitle, style: _subtitleStyle),
+                  Text(subtitle,
+                      style: _subtitleStyle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
@@ -71,8 +79,8 @@ class LiveBanner extends StatelessWidget {
                   color: Color(0xFFB300FF),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Center(
-                  child: const Text(
+                child: const Center(
+                  child: Text(
                     'Live',
                     style: _liveLabelStyle,
                   ),
@@ -86,13 +94,15 @@ class LiveBanner extends StatelessWidget {
   }
 }
 
-class LiveBannerSwiper extends StatelessWidget {
-  final List<LiveBanner> banners;
+class LiveStreamSwiper extends StatelessWidget {
+  // ⬅️
+  final List<LiveStreamingEntity> liveStreams;
   final double height;
 
-  const LiveBannerSwiper({
+  const LiveStreamSwiper({
+    // ⬅️
     super.key,
-    required this.banners,
+    required this.liveStreams,
     this.height = 210.0,
   });
 
@@ -108,14 +118,21 @@ class LiveBannerSwiper extends StatelessWidget {
         viewportFraction: 1,
         scale: 0.95,
         autoplay: true,
-        itemCount: banners.length,
+        itemCount: liveStreams.length,
         itemBuilder: (context, index) {
-          return SizedBox(
-            width: screenWidth,
-            height: height,
+          final stream = liveStreams[index];
+
+          return GestureDetector(
+            // ⬅️
+            onTap: () =>
+                context.push('/player?playbackId=${stream.playbackId}'),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: banners[index],
+              child: LiveBanner(
+                title: stream.title,
+                subtitle: 'Clase en vivo',
+                imageUrl: 'lib/config/assets/productivity_square.png',
+              ),
             ),
           );
         },

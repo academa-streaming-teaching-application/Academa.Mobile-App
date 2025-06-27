@@ -1,7 +1,7 @@
 # Podfile (modificado)
 
 # 1️⃣  Habilita plataforma iOS 12 o superior
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 

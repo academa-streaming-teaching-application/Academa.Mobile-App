@@ -3,7 +3,17 @@ import 'package:go_router/go_router.dart';
 
 class CustomClassViewAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const CustomClassViewAppBar({super.key});
+  final String title;
+  final String classId;
+  final String teacherId;
+  final String userRole;
+  const CustomClassViewAppBar({
+    super.key,
+    required this.title,
+    required this.classId,
+    required this.teacherId,
+    required this.userRole,
+  });
 
   static const TextStyle _titleStyle = TextStyle(
     fontSize: 24,
@@ -24,7 +34,7 @@ class CustomClassViewAppBar extends StatelessWidget
     return AppBar(
       backgroundColor: Colors.black,
       forceMaterialTransparency: true,
-      title: Text('Matemática Básica', style: _titleStyle),
+      title: Text(title, style: _titleStyle),
       leading: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: _iconBg,
@@ -34,14 +44,16 @@ class CustomClassViewAppBar extends StatelessWidget
         ),
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: _iconBg,
-          child: IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
+        if (userRole == 'teacher')
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: _iconBg,
+            child: IconButton(
+              icon: const Icon(Icons.video_call_outlined, color: Colors.white),
+              onPressed: () => context
+                  .push('/live-view?classId=$classId&teacherId=$teacherId'),
+            ),
           ),
-        ),
       ],
     );
   }
