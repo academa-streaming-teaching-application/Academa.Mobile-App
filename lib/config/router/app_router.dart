@@ -1,5 +1,4 @@
 import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view.dart';
-import 'package:academa_streaming_platform/presentation/auth/views/sign_up_view.dart';
 import 'package:academa_streaming_platform/presentation/class/views/class_view.dart';
 import 'package:academa_streaming_platform/presentation/live/views/live_broadcast_stream_view.dart';
 import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
@@ -35,25 +34,6 @@ final appRouter = GoRouter(
         },
       ),
     ),
-
-    //
-
-    GoRoute(
-      path: '/sign-up',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const SignUpView(),
-        transitionDuration: const Duration(milliseconds: 400),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      ),
-    ),
-
-    //
 
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {

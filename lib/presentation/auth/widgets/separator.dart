@@ -13,7 +13,7 @@ class Separator extends StatelessWidget {
         Expanded(child: Divider(color: color, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(text, style: TextStyle(color: color)),
+          child: Text(text, style: TextStyle(color: color, fontSize: 16)),
         ),
         Expanded(child: Divider(color: color, thickness: 1)),
       ],
