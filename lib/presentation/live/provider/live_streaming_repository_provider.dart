@@ -12,7 +12,7 @@ final liveStreamingRepositoryProvider = Provider<LiveStreamingRepository>(
   (ref) => LiveStreamingRepositoryImpl(
     LiveStreamingDataSourceImpl(
       Dio(
-        BaseOptions(baseUrl: 'http://192.168.1.113:3000/api/v1'),
+        BaseOptions(baseUrl: 'http://192.168.68.110:3000/api/v1'),
       ),
     ),
   ),
