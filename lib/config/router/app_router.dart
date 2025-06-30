@@ -10,12 +10,14 @@ import 'package:academa_streaming_platform/presentation/widgets/shared/mux_video
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../presentation/home/views/home_page_rebrand.dart';
+
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
   routes: [
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) => const HomePageRebrand(),
     ),
 
     //
