@@ -1,4 +1,4 @@
-import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view.dart';
+import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view_rebrand.dart';
 import 'package:academa_streaming_platform/presentation/class/views/class_view.dart';
 import 'package:academa_streaming_platform/presentation/live/views/live_broadcast_stream_view.dart';
 import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
