@@ -1,5 +1,5 @@
 import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view_rebrand.dart';
-import 'package:academa_streaming_platform/presentation/class/views/class_view.dart';
+import 'package:academa_streaming_platform/presentation/subject/views/class_view.dart';
 import 'package:academa_streaming_platform/presentation/live/views/live_broadcast_stream_view.dart';
 import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
 import 'package:academa_streaming_platform/presentation/favorites/views/favorites_view.dart';
@@ -11,13 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/home/views/home_page_rebrand.dart';
+import '../../presentation/subject/views/subject_view_rebrand.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/onboarding',
   routes: [
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const HomePageRebrand(),
+      builder: (context, state) => const SubjectViewRebrand(),
     ),
 
     //

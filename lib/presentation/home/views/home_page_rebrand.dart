@@ -171,7 +171,7 @@ class TopRatedClassCard extends StatelessWidget {
                       color: const Color.fromARGB(50, 0, 0, 0),
                       borderRadius: BorderRadius.circular(8)),
                   child: Icon(
-                    Icons.add_circle_outline,
+                    Icons.add_circle_outline_rounded,
                     color: Colors.white,
                     size: 24,
                   ),

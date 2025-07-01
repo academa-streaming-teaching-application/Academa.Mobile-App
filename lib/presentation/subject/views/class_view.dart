@@ -1,5 +1,5 @@
 import 'package:academa_streaming_platform/presentation/auth/provider/auth_provider.dart';
-import 'package:academa_streaming_platform/presentation/class/widgets/custom_class_view_app_bar.dart';
+import 'package:academa_streaming_platform/presentation/subject/widgets/custom_class_view_app_bar.dart';
 import 'package:academa_streaming_platform/presentation/home/provider/follow_provider.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watching.dart';
