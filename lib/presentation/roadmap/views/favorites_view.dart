@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:academa_streaming_platform/presentation/favorites/widgets/custom_favorites_app_bar.dart';
+import 'package:academa_streaming_platform/presentation/roadmap/widgets/custom_favorites_app_bar.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_body_container.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:academa_streaming_platform/presentation/widgets/shared/keep_watching.dart';

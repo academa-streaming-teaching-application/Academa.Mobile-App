@@ -57,6 +57,9 @@ class AppTheme {
           textStyle: TextStyle(fontFamily: ''),
         ),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: Colors.white,
+      ),
     );
   }
 }

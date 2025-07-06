@@ -1,8 +1,9 @@
 import 'package:academa_streaming_platform/presentation/auth/views/sign_in_view_rebrand.dart';
+import 'package:academa_streaming_platform/presentation/roadmap/views/roadmaps_view.dart';
 import 'package:academa_streaming_platform/presentation/subject/views/class_view.dart';
 import 'package:academa_streaming_platform/presentation/live/views/live_broadcast_stream_view.dart';
 import 'package:academa_streaming_platform/presentation/profile/views/profile_view.dart';
-import 'package:academa_streaming_platform/presentation/favorites/views/favorites_view.dart';
+import 'package:academa_streaming_platform/presentation/roadmap/views/favorites_view.dart';
 import 'package:academa_streaming_platform/presentation/home/views/home_view.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:academa_streaming_platform/presentation/screens/main_screen.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/home/views/home_page_rebrand.dart';
+import '../../presentation/roadmap/views/subject_in_roadmap_view.dart';
+import '../../presentation/search/views/search_view.dart';
 import '../../presentation/subject/views/subject_view_rebrand.dart';
 
 final appRouter = GoRouter(
@@ -18,7 +21,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const SubjectViewRebrand(),
+      builder: (context, state) => const SearchView(),
     ),
 
     //
