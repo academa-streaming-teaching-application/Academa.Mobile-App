@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/home/views/home_page_rebrand.dart';
+import '../../presentation/profile/views/profile_rebrand_view.dart';
 import '../../presentation/roadmap/views/subject_in_roadmap_view.dart';
 import '../../presentation/search/views/search_view.dart';
 import '../../presentation/subject/views/subject_view_rebrand.dart';
@@ -21,7 +22,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const SearchView(),
+      builder: (context, state) => const ProfileRebrandView(),
     ),
 
     //
