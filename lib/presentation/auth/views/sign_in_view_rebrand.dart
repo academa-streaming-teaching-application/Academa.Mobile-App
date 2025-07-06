@@ -2,6 +2,7 @@ import 'package:academa_streaming_platform/presentation/auth/widgets/auth_form.d
 import 'package:academa_streaming_platform/presentation/widgets/shared/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/separator.dart';
 
@@ -97,7 +98,9 @@ class SignInView extends StatelessWidget {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.go('/');
+                    },
                     child: Text(
                       'Continúa',
                       style: TextStyle(fontSize: 16),

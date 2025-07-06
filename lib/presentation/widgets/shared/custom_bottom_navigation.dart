@@ -13,11 +13,11 @@ class CustomBottomNavigation extends StatelessWidget {
     switch (path) {
       case '/':
         return 0;
-      case '/favorites-view':
+      case '/search-view':
         return 1;
-      case '/profile-view':
+      case '/roadmap-view':
         return 2;
-      case '/live-view':
+      case '/profile-view':
         return 3;
       default:
         return 0;
@@ -30,13 +30,13 @@ class CustomBottomNavigation extends StatelessWidget {
         context.go('/');
         break;
       case 1:
-        context.go('/favorites-view');
+        context.go('/search-view');
         break;
       case 2:
-        context.go('/profile-view');
+        context.go('/roadmap-view');
         break;
       case 3:
-        context.go('/live-view');
+        context.go('/profile-view');
         break;
     }
   }
@@ -71,10 +71,8 @@ class CustomBottomNavigation extends StatelessWidget {
     final currentIndex = getCurrentIndex(context);
 
     return Container(
-      margin: const EdgeInsets.all(16),
       height: 82,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(36),
         color: Colors.black,
       ),
       child: Row(
@@ -88,31 +86,31 @@ class CustomBottomNavigation extends StatelessWidget {
             label: 'Inicio',
             selected: currentIndex == 0,
           ),
-          if (userRole == 'student')
-            _buildItem(
-              context,
-              index: 1,
-              outlinedIcon: Icons.turned_in_not,
-              filledIcon: Icons.turned_in,
-              label: 'Guardados',
-              selected: currentIndex == 1,
-            ),
+          _buildItem(
+            context,
+            index: 1,
+            outlinedIcon: Icons.search_rounded,
+            filledIcon: Icons.search,
+            label: 'Buscar',
+            selected: currentIndex == 1,
+          ),
+          // if (userRole == 'student')
           _buildItem(
             context,
             index: 2,
+            outlinedIcon: Icons.turned_in_not,
+            filledIcon: Icons.turned_in,
+            label: 'Rutas',
+            selected: currentIndex == 2,
+          ),
+          _buildItem(
+            context,
+            index: 3,
             outlinedIcon: Icons.person_2_outlined,
             filledIcon: Icons.person_2_rounded,
             label: 'Perfil',
-            selected: currentIndex == 2,
+            selected: currentIndex == 3,
           ),
-          // _buildItem(
-          //   context,
-          //   index: 3,
-          //   outlinedIcon: Icons.videocam_outlined,
-          //   filledIcon: Icons.videocam_rounded,
-          //   label: 'Live',
-          //   selected: currentIndex == 3,
-          // ),
         ],
       ),
     );

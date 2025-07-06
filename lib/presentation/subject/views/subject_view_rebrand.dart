@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class SubjectViewRebrand extends StatelessWidget {
   const SubjectViewRebrand({super.key});
@@ -90,7 +91,9 @@ class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       forceMaterialTransparency: true,
       leading: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          context.pop();
+        },
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
           color: Colors.white,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePageRebrand extends StatelessWidget {
   const HomePageRebrand({super.key});
@@ -140,130 +141,135 @@ class TopRatedClassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 290,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Color(0xffE4B7FF),
-                ),
-                width: double.infinity,
-                height: 160,
-                child: SvgPicture.asset(
-                  'lib/config/assets/education_gathering.svg',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 32,
-                  height: 32,
+    return InkWell(
+      onTap: () {
+        context.push('/subject-view');
+      },
+      child: Container(
+        width: 290,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(50, 0, 0, 0),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Icon(
-                    Icons.add_circle_outline_rounded,
-                    color: Colors.white,
-                    size: 24,
+                    borderRadius: BorderRadius.circular(16),
+                    color: Color(0xffE4B7FF),
+                  ),
+                  width: double.infinity,
+                  height: 160,
+                  child: SvgPicture.asset(
+                    'lib/config/assets/education_gathering.svg',
+                    fit: BoxFit.contain,
                   ),
                 ),
-              ),
-              Positioned(
-                child: Container(
-                  width: 48,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff1D1D1E),
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(8),
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(50, 0, 0, 0),
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Icon(
+                      Icons.add_circle_outline_rounded,
+                      color: Colors.white,
+                      size: 24,
                     ),
                   ),
-                  child: Row(
+                ),
+                Positioned(
+                  child: Container(
+                    width: 48,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff1D1D1E),
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 16,
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          '5.2',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffFE4B7FF),
+                      borderRadius: BorderRadius.circular(100)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(
+                      'lib/config/assets/book.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
+                      Container(
+                        width: 200,
+                        height: 40,
+                        child: const Text(
+                          'Materia matemática 1 para ingenieros',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14),
+                        ),
                       ),
                       SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        '5.2',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
+                        width: 220,
+                        child: Text(
+                          'Impartido por Hugo Duque',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      )
+                      ),
                     ],
                   ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xffFE4B7FF),
-                    borderRadius: BorderRadius.circular(100)),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: SvgPicture.asset(
-                    'lib/config/assets/book.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 40,
-                      child: const Text(
-                        'Materia matemática 1 para ingenieros',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 220,
-                      child: Text(
-                        'Impartido por Hugo Duque',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

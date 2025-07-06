@@ -44,6 +44,15 @@ class SubjectInRoadmapAppBar extends StatelessWidget
     return AppBar(
       forceMaterialTransparency: true,
       centerTitle: true,
+      leading: IconButton(
+        onPressed: () {
+          context.pop();
+        },
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: Colors.white,
+        ),
+      ),
       title: Text(
         'Nombre de la ruta',
         style: TextStyle(

@@ -87,53 +87,58 @@ class RoadmapCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 188, 183, 255),
-              borderRadius: BorderRadius.circular(100)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.route),
+    return InkWell(
+      onTap: () {
+        context.push('/roadmap-subjects');
+      },
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 188, 183, 255),
+                borderRadius: BorderRadius.circular(100)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.route),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 300,
-                child: Text(
-                  'Repaso de limites e integrales',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 300,
+                  child: Text(
+                    'Repaso de limites e integrales',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16),
+                    maxLines: 2,
+                  ),
+                ),
+                Text(
+                  '12 clases',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
-                  maxLines: 2,
+                    color: Color(0xff6C6C6C),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-              Text(
-                '12 clases',
-                style: TextStyle(
-                  color: Color(0xff6C6C6C),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Spacer(),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.more_horiz,
-            color: Colors.white,
-          ),
-        )
-      ],
+          Spacer(),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.more_horiz,
+              color: Colors.white,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

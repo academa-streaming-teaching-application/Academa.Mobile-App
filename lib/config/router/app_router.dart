@@ -22,7 +22,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const ProfileRebrandView(),
+      builder: (context, state) => const OnboardingScreen(),
     ),
 
     //
@@ -51,15 +51,15 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/',
-              builder: (context, state) => const HomeView(),
+              builder: (context, state) => const HomePageRebrand(),
             ),
           ],
         ),
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/favorites-view',
-              builder: (context, state) => const FavoritesView(),
+              path: '/roadmap-view',
+              builder: (context, state) => const RoadmapsView(),
             ),
           ],
         ),
@@ -67,15 +67,15 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/profile-view',
-              builder: (context, state) => const ProfileView(),
+              builder: (context, state) => const ProfileRebrandView(),
             ),
           ],
         ),
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/',
-              builder: (context, state) => const HomeView(),
+              path: '/search-view',
+              builder: (context, state) => const SearchView(),
             ),
           ],
         ),
@@ -83,10 +83,25 @@ final appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/class-view',
+      path: '/subject-view',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const ClassView(),
+        child: const SubjectViewRebrand(),
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ),
+    ),
+
+    GoRoute(
+      path: '/roadmap-subjects',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SubjectInRoadmapView(),
         transitionDuration: const Duration(milliseconds: 400),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
