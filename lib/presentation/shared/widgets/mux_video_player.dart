@@ -1,6 +1,6 @@
-import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_chat_list.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_message_input.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/live_chat/live_video_header.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/live_chat/live_chat_list.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/live_chat/live_message_input.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/live_chat/live_video_header.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 

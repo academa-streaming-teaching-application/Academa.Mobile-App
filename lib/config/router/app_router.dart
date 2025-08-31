@@ -3,7 +3,7 @@ import 'package:academa_streaming_platform/presentation/roadmap/views/roadmaps_v
 import 'package:academa_streaming_platform/presentation/live/views/live_broadcast_stream_view.dart';
 import 'package:academa_streaming_platform/presentation/onboarding/onboarding_screen.dart';
 import 'package:academa_streaming_platform/presentation/screens/main_screen.dart';
-import 'package:academa_streaming_platform/presentation/widgets/shared/mux_video_player.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/mux_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -79,16 +79,15 @@ final appRouter = GoRouter(
     ),
 
     GoRoute(
-      path: '/subject-view',
+      path: '/subject-view/:id',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const SubjectViewRebrand(),
+        child: SubjectViewRebrand(
+          subjectId: state.pathParameters['id']!,
+        ),
         transitionDuration: const Duration(milliseconds: 400),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
+          return FadeTransition(opacity: animation, child: child);
         },
       ),
     ),

@@ -1,23 +1,52 @@
+import 'package:academa_streaming_platform/presentation/shared/shared_providers/subject_repository_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-class SubjectViewRebrand extends StatelessWidget {
-  const SubjectViewRebrand({super.key});
+import '../../../domain/entities/subject_entity.dart';
+
+class SubjectViewRebrand extends ConsumerWidget {
+  final String subjectId;
+  const SubjectViewRebrand({super.key, required this.subjectId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncSubject = ref.watch(subjectByIdProvider(subjectId));
+
+    return Scaffold(
+      appBar: const SubjectViewAppBar(),
+      body: asyncSubject.when(
+        loading: () => const _LoadingView(),
+        error: (e, _) => _ErrorView(message: '$e'),
+        data: (subject) => _Content(subject: subject),
+      ),
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  final SubjectEntity subject;
+  const _Content({required this.subject});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SubjectViewAppBar(),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          children: [
-            SizedBox(height: 8),
-            SubjectHeading(),
-            SizedBox(height: 16),
-            Text(
+    final teacherName = _teacherFullName(subject);
+    final hasDescription = subject.description.trim().isNotEmpty;
+    final hasVideos =
+        subject.numberOfClasses > 0; // cuando tengas assets, usa esa lista
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        children: [
+          const SizedBox(height: 8),
+          SubjectHeading(subject: subject),
+          const SizedBox(height: 16),
+
+          if (hasDescription) ...[
+            const Text(
               'Sobre el curso',
               style: TextStyle(
                 fontSize: 18,
@@ -25,64 +54,78 @@ class SubjectViewRebrand extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'En este curso podras reforzar tus bases matematicas sobre limites con videos teoricos y practicos',
-              style: TextStyle(
+              subject.description, // ← viene directo del backend
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
                 fontWeight: FontWeight.w300,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+          ],
+
+          // No mostramos si no hay
+          if (hasVideos)
             ...List.generate(
-              10,
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+              subject.numberOfClasses, // luego cámbialo por assets.length
+              (index) => const Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
                 child: SubjectVideoCard(),
               ),
             ),
-            Text(
-              'Profesor',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
+
+          const Text(
+            'Profesor',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
             ),
-            SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xff1D1D1E),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Hugo Duque',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
-                    ),
+          ),
+          const SizedBox(height: 8),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xff1D1D1E),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  teacherName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 32),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }
+
+  String _teacherFullName(SubjectEntity s) {
+    final p = s.professor;
+    if (p == null) return 'Profesor';
+    final name = '${p.name} ${p.lastName}'.trim();
+    return name.isNotEmpty ? name : 'Profesor';
+  }
 }
 
+/*─────────────────────────── AppBar (sin cambios visuales) ────────────────────────────*/
+
 class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const SubjectViewAppBar({
-    super.key,
-  });
+  const SubjectViewAppBar({super.key});
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
@@ -91,16 +134,11 @@ class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       forceMaterialTransparency: true,
       leading: IconButton(
-        onPressed: () {
-          context.pop();
-        },
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          color: Colors.white,
-        ),
+        onPressed: () => context.pop(),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
       ),
       centerTitle: true,
-      title: Text(
+      title: const Text(
         'Clase',
         style: TextStyle(
           fontSize: 18,
@@ -108,30 +146,24 @@ class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      actions: [
+      actions: const [
         IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.add_circle_outline_rounded,
-            color: Colors.white,
-          ),
+          onPressed: null,
+          icon: Icon(Icons.add_circle_outline_rounded, color: Colors.white),
         ),
         IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.ios_share_rounded,
-            color: Colors.white,
-          ),
+          onPressed: null,
+          icon: Icon(Icons.ios_share_rounded, color: Colors.white),
         ),
       ],
     );
   }
 }
 
+/*─────────────────────────── Video card (UI intacta) ────────────────────────────*/
+
 class SubjectVideoCard extends StatelessWidget {
-  const SubjectVideoCard({
-    super.key,
-  });
+  const SubjectVideoCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +171,7 @@ class SubjectVideoCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Color(0xffFE4B7FF),
+            color: const Color(0xffFE4B7FF),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
@@ -150,14 +182,12 @@ class SubjectVideoCard extends StatelessWidget {
               height: 64,
               placeholderBuilder: (context) => Container(
                 decoration: BoxDecoration(
-                  color: Color(0xffFE4B7FF),
+                  color: const Color(0xffFE4B7FF),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 width: 72,
                 height: 64,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                ),
+                child: const Padding(padding: EdgeInsets.all(8.0)),
               ),
             ),
           ),
@@ -166,21 +196,20 @@ class SubjectVideoCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: const [
               SizedBox(
                 width: 250,
                 child: Text(
                   'Repaso de limites e integrales',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                   maxLines: 3,
                 ),
               ),
-              SizedBox(
-                height: 8,
-              ),
+              SizedBox(height: 8),
               Text(
                 '10:12 min',
                 style: TextStyle(
@@ -197,19 +226,28 @@ class SubjectVideoCard extends StatelessWidget {
   }
 }
 
+/*─────────────────────────── Heading (UI intacta, datos reales) ────────────────────────────*/
+
 class SubjectHeading extends StatelessWidget {
-  const SubjectHeading({
-    super.key,
-  });
+  final SubjectEntity subject;
+  const SubjectHeading({super.key, required this.subject});
 
   @override
   Widget build(BuildContext context) {
+    final classes = subject.numberOfClasses;
+    final rating = subject.averageRating.clamp(0, 5).toStringAsFixed(1);
+    final students =
+        subject.studentIds.length; // cuando tengas studentsCount, úsalo aquí
+    final title =
+        subject.subject.isNotEmpty ? subject.subject : subject.category;
+
     return Row(
       children: [
         Container(
           decoration: BoxDecoration(
-              color: Color(0xffFE4B7FF),
-              borderRadius: BorderRadius.circular(100)),
+            color: const Color(0xffFE4B7FF),
+            borderRadius: BorderRadius.circular(100),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SvgPicture.asset(
@@ -228,27 +266,20 @@ class SubjectHeading extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '12 clases',
-                    style: TextStyle(
+                    '$classes clases',
+                    style: const TextStyle(
                       color: Color(0xff6C6C6C),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),
                   ),
-                  SizedBox(
-                    width: 1,
-                  ),
-                  Icon(
-                    Icons.star_rate_rounded,
-                    size: 18,
-                    color: Color(0xff6C6C6C),
-                  ),
-                  SizedBox(
-                    width: 1,
-                  ),
+                  const SizedBox(width: 1),
+                  const Icon(Icons.star_rate_rounded,
+                      size: 18, color: Color(0xff6C6C6C)),
+                  const SizedBox(width: 1),
                   Text(
-                    '5.2 | 100 estudiantes',
-                    style: TextStyle(
+                    '$rating | $students estudiantes',
+                    style: const TextStyle(
                       color: Color(0xff6C6C6C),
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -256,21 +287,48 @@ class SubjectHeading extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 4),
               SizedBox(
                 width: 350,
                 child: Text(
-                  'Repaso de limites e integrales',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
+                  title,
                   maxLines: 2,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
         )
       ],
+    );
+  }
+}
+
+/*─────────────────────────── Loading/Error ────────────────────────────*/
+
+class _LoadingView extends StatelessWidget {
+  const _LoadingView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+  const _ErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Error: $message',
+          style: const TextStyle(color: Colors.redAccent)),
     );
   }
 }

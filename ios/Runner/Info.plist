@@ -28,6 +28,7 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -41,24 +42,49 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
-	<!-- 🔑 Permisos y ATS añadidos -->
+	<!-- Descripciones de permisos -->
 	<key>NSCameraUsageDescription</key>
 	<string>Necesitamos la cámara para transmitir video en vivo</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Necesitamos el micrófono para transmitir audio en vivo</string>
 
-	<!-- Si tu backend usa http:// en vez de https:// -->
+	<!-- ATS (si tu backend usa http://) -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<!-- Fin de claves añadidas -->
+
+	<!-- ✅ Google Sign-In -->
+	<!-- Opcional si ya usas GoogleService-Info.plist, pero ayuda a evitar confusiones -->
+	<key>GIDClientID</key>
+	<string>137583794740-oqlkf8smvheevqu0p9qj8qj463usf08d.apps.googleusercontent.com</string>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO Replace this value: -->
+				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+				<string>com.googleusercontent.apps.137583794740-oqlkf8smvheevqu0p9qj8qj463usf08d</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>google</string>
+		<string>com.googleusercontent.apps.137583794740-oqlkf8smvheevqu0p9qj8qj463usf08d</string>
+	</array>
 
 </dict>
 </plist>

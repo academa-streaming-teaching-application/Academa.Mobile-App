@@ -1,7 +1,7 @@
 import '../entities/subject_entity.dart';
 
 abstract class SubjectRepository {
-  Future<List<SubjectEntity>> getAllSubjects({String? userId});
+  Future<List<SubjectEntity>> getAllSubjects();
   Future<SubjectEntity> getSubjectById(String id);
 
   Future<List<SubjectEntity>> getTopRatedSubjects({

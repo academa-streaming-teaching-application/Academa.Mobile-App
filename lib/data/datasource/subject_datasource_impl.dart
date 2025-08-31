@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:academa_streaming_platform/domain/entities/user_entity.dart';
 import 'package:dio/dio.dart';
 import '../../domain/entities/subject_entity.dart';
 import '../../domain/datasource/subject_datasource.dart';
@@ -10,7 +11,7 @@ class SubjectDataSourceImpl implements SubjectDataSource {
   SubjectDataSourceImpl(this.dio, {this.basePath = '/api/v1/subjects'});
 
   @override
-  Future<List<SubjectEntity>> getAllSubjects({String? userId}) async {
+  Future<List<SubjectEntity>> getAllSubjects() async {
     try {
       final Response resp = await dio.get(basePath);
       final Map<String, dynamic> root = Map<String, dynamic>.from(resp.data);
@@ -18,8 +19,7 @@ class SubjectDataSourceImpl implements SubjectDataSource {
       final List<dynamic> rawList = List<dynamic>.from(data['subjects']);
 
       return rawList
-          .map((e) =>
-              _mapSubject(Map<String, dynamic>.from(e), currentUserId: userId))
+          .map((e) => _mapSubject(Map<String, dynamic>.from(e)))
           .toList();
     } on DioException catch (e, st) {
       _logDioError('GET $basePath', e, st);
@@ -111,28 +111,40 @@ class SubjectDataSourceImpl implements SubjectDataSource {
     Map<String, dynamic> e, {
     String? currentUserId,
   }) {
-    final dynamic professorRaw = e['professor'];
-    final String? teacherId = professorRaw is Map
-        ? (professorRaw['_id'] as String?)
-        : (professorRaw as String?);
+    UserEntity? _mapProfessor(dynamic raw) {
+      if (raw is Map) {
+        final m = Map<String, dynamic>.from(raw);
+        return UserEntity(
+          id: (m['_id'] ?? m['id'] ?? '').toString(),
+          name: (m['name'] ?? '').toString(),
+          lastName: (m['lastName'] ?? '').toString(),
+          email: (m['email'] ?? '')
+              .toString(), // ⚠️ asegúrate que el back lo incluya
+          image: (m['image'] ?? '').toString(),
+          role: (m['role'] ?? '').toString(),
+        );
+      }
+      return null; // si solo viene el ObjectId, no hay datos para el UI
+    }
 
-    final List<String> studentIds = (e['students'] is List)
+    final List<String> students = (e['students'] is List)
         ? List<String>.from((e['students'] as List).map((x) => '$x'))
         : const <String>[];
 
     final bool isFollowed = (currentUserId != null)
-        ? studentIds.contains(currentUserId)
+        ? students.contains(currentUserId)
         : (e['isFollowed'] as bool?) ?? false;
 
     return SubjectEntity(
       id: (e['_id'] ?? e['id'] ?? '').toString(),
       subject: (e['subject'] ?? '').toString(),
-      topic: (e['topic'] ?? '').toString(),
+      category: (e['category'] ?? '').toString(),
+      description: (e['description'] ?? '').toString(),
       numberOfClasses: (e['numberOfClasses'] as num?)?.toInt() ?? 0,
       averageRating: (e['averageRating'] as num?)?.toDouble() ?? 0.0,
       ratingCount: (e['ratingCount'] as num?)?.toInt() ?? 0,
-      teacherId: teacherId,
-      studentIds: studentIds,
+      professor: _mapProfessor(e['professor']),
+      studentIds: students,
       isFollowed: isFollowed,
     );
   }

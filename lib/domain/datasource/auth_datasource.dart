@@ -1,13 +1,11 @@
-import '../entities/user_entity.dart';
+import 'dart:async';
+import 'package:academa_streaming_platform/domain/entities/auth_entity.dart';
 
 abstract class AuthDataSource {
-  Future<UserEntity> signInWithGoogle(String role);
-  Future<UserEntity> signInWithEmail(String email, String password);
-  Future<UserEntity> signUpWithEmail({
-    required String email,
-    required String password,
-    required String name,
-    required String lastName,
-    required String role,
-  });
+  Future<AuthSession> signInWithGoogle({String role = 'student'});
+  Future<AuthSession> signInWithApple({String role = 'student'});
+  Future<AuthSession> loginWithEmail(String email, String password);
+
+  Future<String?> refreshAccessToken(String refreshToken);
+  Future<void> logout(String refreshToken);
 }

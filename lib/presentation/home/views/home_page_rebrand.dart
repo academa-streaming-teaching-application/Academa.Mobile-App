@@ -1,8 +1,11 @@
 // lib/presentation/home/home_page_rebrand.dart
-import 'package:academa_streaming_platform/presentation/home/provider/subject_repository_provider.dart';
+
 import 'package:academa_streaming_platform/presentation/home/widgets/keep_watching_card.dart';
 import 'package:academa_streaming_platform/presentation/home/widgets/onlive_video_card.dart';
-import 'package:academa_streaming_platform/presentation/home/widgets/top_rated_subject_card.dart';
+
+import 'package:academa_streaming_platform/presentation/shared/shared_providers/subject_repository_providers.dart'
+    show TopRatedParams, topRatedSubjectsFutureProvider;
+import 'package:academa_streaming_platform/presentation/shared/widgets/top_rated_subject_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,7 +34,7 @@ class HomePageRebrand extends ConsumerWidget {
       ),
       body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // evita intentar ocupar todo el alto
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Live Activos
@@ -65,6 +68,7 @@ class HomePageRebrand extends ConsumerWidget {
             // Top Clases
             const _SectionTitle('Top Clases'),
             SizedBox(
+              height: 250,
               child: topRatedAsync.when(
                 loading: () => const _TopRatedLoadingList(),
                 error: (e, _) => _TopRatedError(message: '$e'),

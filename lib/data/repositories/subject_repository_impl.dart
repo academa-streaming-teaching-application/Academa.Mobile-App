@@ -11,7 +11,7 @@ class SubjectRepositoryImpl implements SubjectRepository {
 
   @override
   Future<List<SubjectEntity>> getAllSubjects({String? userId}) {
-    return dataSource.getAllSubjects(userId: userId);
+    return dataSource.getAllSubjects();
   }
 
   @override

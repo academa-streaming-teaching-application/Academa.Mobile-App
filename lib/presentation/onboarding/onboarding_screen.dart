@@ -1,4 +1,4 @@
-import 'package:academa_streaming_platform/presentation/widgets/shared/custom_button.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

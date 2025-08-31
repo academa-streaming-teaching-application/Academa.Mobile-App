@@ -1,41 +1,97 @@
 import 'package:academa_streaming_platform/presentation/search/widgets/search_class_delegate.dart';
+import 'package:academa_streaming_platform/presentation/shared/shared_providers/subject_repository_providers.dart';
+import 'package:academa_streaming_platform/presentation/shared/widgets/top_rated_subject_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class SearchView extends StatelessWidget {
+class SearchView extends ConsumerWidget {
   const SearchView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncTop = ref.watch(
+      topRatedSubjectsFutureProvider(
+        const TopRatedParams(limit: 10, minRatings: 3),
+      ),
+    );
+
     return Scaffold(
-      appBar: SearchAppBar(),
+      appBar: const SearchAppBar(),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: ListView(
           children: [
-            SizedBox(
-              height: 8,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Top Clases',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                   textAlign: TextAlign.left,
                 ),
               ),
             ),
-            ...List.generate(
-              10,
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 16.0, left: 8, right: 8),
-                child: TopRatedClassCard(),
+            asyncTop.when(
+              // ⬇️ placeholders con el mismo look del UI original
+              loading: () => Column(
+                children: List.generate(
+                  10,
+                  (index) => const Padding(
+                    padding: EdgeInsets.only(bottom: 16.0, left: 8, right: 8),
+                    child: _TopRatedCardPlaceholder(),
+                  ),
+                ),
               ),
+              error: (e, _) => Column(
+                children: List.generate(
+                  4,
+                  (index) => const Padding(
+                    padding: EdgeInsets.only(bottom: 16.0, left: 8, right: 8),
+                    child: _TopRatedCardPlaceholder(),
+                  ),
+                ),
+              ),
+              data: (subjects) {
+                if (subjects.isEmpty) {
+                  return Column(
+                    children: List.generate(
+                      4,
+                      (index) => const Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 16.0, left: 8, right: 8),
+                        child: _TopRatedCardPlaceholder(),
+                      ),
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: List.generate(
+                    subjects.length,
+                    (index) {
+                      final s = subjects[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16.0,
+                          left: 8,
+                          right: 8,
+                        ),
+                        child: TopRatedSubjectCard(
+                          subject: s,
+                          width: double.infinity,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -81,8 +137,8 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                 borderRadius: BorderRadius.circular(16),
                 color: Colors.black,
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Icon(Icons.search_rounded,
                       color: Color.fromARGB(255, 72, 72, 75)),
                   SizedBox(width: 8),
@@ -103,10 +159,10 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class TopRatedClassCard extends StatelessWidget {
-  const TopRatedClassCard({
-    super.key,
-  });
+/// Placeholder visual idéntico al card original para loading/error/vacío.
+/// Mantiene alturas, colores y paddings del diseño.
+class _TopRatedCardPlaceholder extends StatelessWidget {
+  const _TopRatedCardPlaceholder();
 
   @override
   Widget build(BuildContext context) {
@@ -117,120 +173,49 @@ class TopRatedClassCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Color(0xffE4B7FF),
-                ),
-                width: double.infinity,
-                height: 160,
-                child: SvgPicture.asset(
-                  'lib/config/assets/education_gathering.svg',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(50, 0, 0, 0),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Icon(
-                    Icons.add_circle_outline_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-              ),
-              Positioned(
-                child: Container(
-                  width: 48,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff1D1D1E),
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(8),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        '5.2',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
+          // header
+          Container(
+            height: 160,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xffE4B7FF),
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
-          SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
           Row(
             children: [
               Container(
+                width: 28,
+                height: 28,
                 decoration: BoxDecoration(
-                    color: Color(0xffFE4B7FF),
-                    borderRadius: BorderRadius.circular(100)),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: SvgPicture.asset(
-                    'lib/config/assets/book.svg',
-                    width: 24,
-                    height: 24,
-                  ),
+                  color: const Color(0xffE4B7FF),
+                  borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              const SizedBox(width: 8),
+              // textos
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 200,
+                    // título (alto aprox. de 2 líneas)
+                    SizedBox(
                       height: 40,
-                      child: const Text(
-                        'Materia matemática 1 para ingenieros',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF1E1E1E)),
                       ),
                     ),
+                    SizedBox(height: 4),
                     SizedBox(
-                      width: 220,
-                      child: Text(
-                        'Impartido por Hugo Duque',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      height: 16,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF1E1E1E)),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ],

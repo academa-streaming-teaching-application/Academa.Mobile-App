@@ -1,4 +1,6 @@
+import 'package:academa_streaming_platform/presentation/shared/shared_providers/subject_repository_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchClassDelegate extends SearchDelegate<void> {
@@ -12,36 +14,18 @@ class SearchClassDelegate extends SearchDelegate<void> {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       scaffoldBackgroundColor: Colors.black,
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-        ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(borderSide: BorderSide.none),
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(color: Colors.white),
       ),
     );
   }
-
-  final List<Map<String, String>> mockClasses = [
-    {
-      'id': '1',
-      'title': 'Introducción a Flutter',
-      'description': 'Aprende los fundamentos de Flutter desde cero.'
-    },
-    {
-      'id': '2',
-      'title': 'React para principiantes',
-      'description': 'Domina los conceptos básicos de React.js.'
-    },
-    {
-      'id': '3',
-      'title': 'Python Intermedio',
-      'description': 'Estructuras de datos, funciones y más.'
-    },
-    {
-      'id': '4',
-      'title': 'Diseño de interfaces',
-      'description': 'Buenas prácticas y herramientas modernas.'
-    },
-  ];
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
@@ -69,50 +53,98 @@ class SearchClassDelegate extends SearchDelegate<void> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<Map<String, String>> filtered = query.isEmpty
-        ? mockClasses
-        : mockClasses
-            .where((c) =>
-                c['title']!.toLowerCase().contains(query.trim().toLowerCase()))
-            .toList();
+    // No creamos un ProviderScope nuevo; ya existe en la app.
+    return Consumer(
+      builder: (context, ref, _) {
+        // dispara la carga si aún no se realizó
+        final allAsync = ref.watch(allSubjectsProvider);
+        final filtered = ref.watch(subjectsSearchProvider(query));
 
-    if (filtered.isEmpty) {
-      return const Center(
-        child: Text(
-          'Sin resultados',
-          style: TextStyle(color: Colors.black),
-        ),
-      );
-    }
+        if (allAsync.isLoading) {
+          return const _SearchSkeleton();
+        }
 
-    return Material(
-      color: Colors.black,
-      child: ListView.separated(
-        itemCount: filtered.length,
-        separatorBuilder: (_, __) => const Divider(height: 0, thickness: .5),
-        itemBuilder: (_, i) {
-          final subject = filtered[i];
-
-          return ListTile(
-            leading: Image.asset(
-              'lib/config/assets/productivity_square.png',
-              width: 56,
-              fit: BoxFit.cover,
-            ),
-            title: Text(
-              subject['title']!,
-              style: const TextStyle(color: Colors.white),
-            ),
-            subtitle: Text(
-              subject['description']!,
-              style: const TextStyle(color: Colors.white54),
-            ),
-            onTap: () {
-              close(context, null);
-              context.push('/class-view?id=${subject['id']}');
-            },
+        if (filtered.isEmpty) {
+          return const Center(
+            child:
+                Text('Sin resultados', style: TextStyle(color: Colors.white70)),
           );
-        },
+        }
+
+        return Material(
+          color: Colors.black,
+          child: ListView.separated(
+            itemCount: filtered.length,
+            separatorBuilder: (_, __) => const Divider(
+              height: 0,
+              thickness: .5,
+              color: Color.fromARGB(255, 50, 50, 50),
+            ),
+            itemBuilder: (_, i) {
+              final s = filtered[i];
+
+              // Campos según tu último provider:
+              final title = s.subject ?? 'Clase';
+              final subtitle = s.category ?? '';
+              final rating = (s.averageRating ?? 0).toStringAsFixed(1);
+
+              return ListTile(
+                leading: Image.asset(
+                  'lib/config/assets/productivity_square.png',
+                  width: 56,
+                  fit: BoxFit.cover,
+                ),
+                title: Text(title, style: const TextStyle(color: Colors.white)),
+                subtitle: Text(
+                  subtitle.isEmpty ? '⭐ $rating' : '$subtitle  ·  ⭐ $rating',
+                  style: const TextStyle(color: Colors.white54),
+                ),
+                onTap: () {
+                  close(context, null);
+                  context.push('/subject-view/${s.id}');
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SearchSkeleton extends StatelessWidget {
+  const _SearchSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: 8,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, __) => const ListTile(
+        leading: _Box(w: 56, h: 56),
+        title: _Box(w: 200, h: 16),
+        subtitle: Padding(
+          padding: EdgeInsets.only(top: 6.0),
+          child: _Box(w: 160, h: 14),
+        ),
+      ),
+    );
+  }
+}
+
+class _Box extends StatelessWidget {
+  final double w;
+  final double h;
+  const _Box({required this.w, required this.h});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: w,
+      height: h,
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(6),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import '../entities/subject_entity.dart';
 
 abstract class SubjectDataSource {
-  Future<List<SubjectEntity>> getAllSubjects({String? userId});
+  Future<List<SubjectEntity>> getAllSubjects();
 
   Future<List<SubjectEntity>> getTopRatedSubjects({
     int limit = 10,

@@ -1,36 +1,27 @@
-import '../../domain/datasource/auth_datasource.dart';
-import '../../domain/entities/user_entity.dart';
-import '../../domain/repositories/user_repository.dart';
+import 'package:academa_streaming_platform/domain/datasource/auth_datasource.dart';
+import 'package:academa_streaming_platform/domain/entities/auth_entity.dart';
+import 'package:academa_streaming_platform/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthDataSource remoteDataSource;
-
-  AuthRepositoryImpl(this.remoteDataSource);
-
-  @override
-  Future<UserEntity> loginWithGoogle(String role) {
-    return remoteDataSource.signInWithGoogle(role);
-  }
+  final AuthDataSource remote;
+  AuthRepositoryImpl(this.remote);
 
   @override
-  Future<UserEntity> loginWithEmail(String email, String password) {
-    return remoteDataSource.signInWithEmail(email, password);
-  }
+  Future<AuthSession> loginWithGoogle({String role = 'student'}) =>
+      remote.signInWithGoogle(role: role);
 
   @override
-  Future<UserEntity> registerWithEmail({
-    required String email,
-    required String password,
-    required String name,
-    required String lastName,
-    required String role,
-  }) {
-    return remoteDataSource.signUpWithEmail(
-      email: email,
-      password: password,
-      name: name,
-      lastName: lastName,
-      role: role,
-    );
-  }
+  Future<AuthSession> loginWithApple({String role = 'student'}) =>
+      remote.signInWithApple(role: role);
+
+  @override
+  Future<AuthSession> loginWithEmail(String email, String password) =>
+      remote.loginWithEmail(email, password);
+
+  @override
+  Future<String?> refresh(String refreshToken) =>
+      remote.refreshAccessToken(refreshToken);
+
+  @override
+  Future<void> logout(String refreshToken) => remote.logout(refreshToken);
 }
