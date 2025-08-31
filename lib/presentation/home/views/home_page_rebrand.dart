@@ -1,475 +1,145 @@
+// lib/presentation/home/home_page_rebrand.dart
+import 'package:academa_streaming_platform/presentation/home/provider/subject_repository_provider.dart';
+import 'package:academa_streaming_platform/presentation/home/widgets/keep_watching_card.dart';
+import 'package:academa_streaming_platform/presentation/home/widgets/onlive_video_card.dart';
+import 'package:academa_streaming_platform/presentation/home/widgets/top_rated_subject_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import '../../../domain/entities/subject_entity.dart';
 
-class HomePageRebrand extends StatelessWidget {
+class HomePageRebrand extends ConsumerWidget {
   const HomePageRebrand({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final params = const TopRatedParams(limit: 10, minRatings: 3);
+    final topRatedAsync = ref.watch(topRatedSubjectsFutureProvider(params));
+
     return Scaffold(
-      // Logo + Academa Heading
       appBar: AppBar(
         title: Row(
           children: [
-            SvgPicture.asset(
-              'lib/config/assets/academa_logo.svg',
-              width: 16,
-              height: 16,
-            ),
-            const SizedBox(
-              width: 4,
-            ),
-            const Text(
-              'Academa',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+            SvgPicture.asset('lib/config/assets/academa_logo.svg',
+                width: 16, height: 16),
+            const SizedBox(width: 4),
+            const Text('Academa',
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
-      body: Column(
-        children: [
-          //OnLive Card Title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Live Activos',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-                textAlign: TextAlign.left,
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // evita intentar ocupar todo el alto
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Live Activos
+            const _SectionTitle('Live Activos'),
+            SizedBox(
+              height: 300,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                scrollDirection: Axis.horizontal,
+                itemCount: 6,
+                separatorBuilder: (_, __) => const SizedBox(width: 16),
+                itemBuilder: (_, __) => const OnLiveVideoCard(),
               ),
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          //OnLive Card Slider
-          SizedBox(
-            height: 300,
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: 6,
-              separatorBuilder: (context, _) => SizedBox(
-                width: 16,
-              ),
-              itemBuilder: (context, index) => OnLiveVideoCard(),
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          //Keep Watching title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Continúa viendo',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-                textAlign: TextAlign.left,
+            const SizedBox(height: 8),
+
+            // Continúa viendo
+            const _SectionTitle('Continúa viendo'),
+            SizedBox(
+              height: 100,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                scrollDirection: Axis.horizontal,
+                itemCount: 6,
+                separatorBuilder: (_, __) => const SizedBox(width: 16),
+                itemBuilder: (_, __) => const KeepWatchingCard(),
               ),
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          //Keep Watching Card
-          SizedBox(
-            height: 100,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              itemCount: 6,
-              separatorBuilder: (context, _) => SizedBox(
-                width: 16,
-              ),
-              itemBuilder: (context, index) => KeepWatchingCard(),
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          //Top-Rated Class title
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Top Clases',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-                textAlign: TextAlign.left,
+            const SizedBox(height: 8),
+
+            // Top Clases
+            const _SectionTitle('Top Clases'),
+            SizedBox(
+              child: topRatedAsync.when(
+                loading: () => const _TopRatedLoadingList(),
+                error: (e, _) => _TopRatedError(message: '$e'),
+                data: (List<SubjectEntity> subjects) {
+                  if (subjects.isEmpty) {
+                    return const Center(
+                      child: Text('No hay materias con ratings suficientes.',
+                          style: TextStyle(color: Colors.white70)),
+                    );
+                  }
+                  return ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: subjects.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 16),
+                    itemBuilder: (context, i) =>
+                        TopRatedSubjectCard(subject: subjects[i]),
+                  );
+                },
               ),
             ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          SizedBox(
-            height: 300,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              itemCount: 6,
-              separatorBuilder: (context, _) => SizedBox(
-                width: 16,
-              ),
-              itemBuilder: (context, index) => TopRatedClassCard(),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class TopRatedClassCard extends StatelessWidget {
-  const TopRatedClassCard({
-    super.key,
-  });
+class _SectionTitle extends StatelessWidget {
+  final String text;
+  const _SectionTitle(this.text);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        context.push('/subject-view');
-      },
-      child: Container(
-        width: 290,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+      child: Text(
+        text,
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.w500, fontSize: 16),
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+}
+
+class _TopRatedLoadingList extends StatelessWidget {
+  const _TopRatedLoadingList();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      itemCount: 5,
+      separatorBuilder: (_, __) => const SizedBox(width: 16),
+      itemBuilder: (_, __) => Container(
+        width: 100,
         decoration: BoxDecoration(
+          color: Colors.white10,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Color(0xffE4B7FF),
-                  ),
-                  width: double.infinity,
-                  height: 160,
-                  child: SvgPicture.asset(
-                    'lib/config/assets/education_gathering.svg',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  child: Container(
-                    width: 48,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff1D1D1E),
-                      borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(8),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 16,
-                        ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        Text(
-                          '5.2',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffFE4B7FF),
-                      borderRadius: BorderRadius.circular(100)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SvgPicture.asset(
-                      'lib/config/assets/book.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 200,
-                        height: 40,
-                        child: const Text(
-                          'Materia matemática 1 para ingenieros',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 220,
-                        child: Text(
-                          'Impartido por Hugo Duque',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w300,
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       ),
     );
   }
 }
 
-class KeepWatchingCard extends StatelessWidget {
-  const KeepWatchingCard({
-    super.key,
-  });
+class _TopRatedError extends StatelessWidget {
+  final String message;
+  const _TopRatedError({required this.message});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 290,
-      decoration: BoxDecoration(
-        color: Color(0xff1D1D1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 8,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                    color: Color(0xffFE4B7FF),
-                    borderRadius: BorderRadius.circular(100)),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: SvgPicture.asset(
-                    'lib/config/assets/book.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Repaso de limites e integrales',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14),
-                    ),
-                    SizedBox(
-                      width: 220,
-                      child: Text(
-                        '12 clases | Materia matemática 1 para ingenieros',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 12,
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SizedBox(
-                  width: 110,
-                  child: LinearProgressIndicator(
-                    backgroundColor: Color.fromARGB(255, 91, 91, 94),
-                    valueColor: new AlwaysStoppedAnimation(Color(0xffE4B7FF)),
-                    value: 0.1,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-              Text(
-                'Tiempo restante: 5 min',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
-                  fontSize: 12,
-                ),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class OnLiveVideoCard extends StatelessWidget {
-  const OnLiveVideoCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 290,
-      decoration: BoxDecoration(
-        color: Color(0xff1D1D1E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffE4B7FF),
-                      borderRadius: BorderRadius.circular(100)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SvgPicture.asset(
-                      'lib/config/assets/book.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Container(
-                  width: 200,
-                  height: 40,
-                  child: const Text(
-                    'Materia matemática 1 para ingenieros',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w300,
-                        fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            height: 160, // Ajusta esta altura para la imagen
-            color: Color(0xffE4B7FF),
-            child: SvgPicture.asset(
-              'lib/config/assets/live_colaboration.svg',
-              fit: BoxFit.contain,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Icon(
-                  size: 32,
-                  Icons.play_circle_fill_rounded,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Clase 12',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    Container(
-                      width: 200,
-                      height: 40,
-                      child: const Text(
-                        'Repaso de limites e integrales',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    return Text('Error: $message',
+        style: const TextStyle(color: Colors.redAccent));
   }
 }
