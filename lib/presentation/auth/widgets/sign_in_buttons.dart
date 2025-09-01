@@ -24,9 +24,7 @@ class SignInButtons extends ConsumerWidget {
     );
     try {
       final repo = ref.read(authRepositoryProvider);
-      final session = apple
-          ? await repo.loginWithApple(role: 'student')
-          : await repo.loginWithGoogle(role: 'student');
+      final session = await repo.loginWithGoogle(role: 'student');
 
       await ref
           .read(authTokensProvider.notifier)

@@ -10,9 +10,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> loginWithGoogle({String role = 'student'}) =>
       remote.signInWithGoogle(role: role);
 
-  @override
-  Future<AuthSession> loginWithApple({String role = 'student'}) =>
-      remote.signInWithApple(role: role);
+  // @override
+  // Future<AuthSession> loginWithApple({String role = 'student'}) =>
+  //     remote.signInWithApple(role: role);
 
   @override
   Future<AuthSession> loginWithEmail(String email, String password) =>
