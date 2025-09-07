@@ -1,10 +1,10 @@
 // lib/presentation/live/live_broadcast_screen.dart
 
+import 'package:academa_streaming_platform/presentation/live/provider/live_streaming_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rtmp_broadcaster/camera.dart';
-import '../provider/live_streaming_notifier.dart';
 
 class LiveBroadcastScreen extends ConsumerStatefulWidget {
   const LiveBroadcastScreen({super.key});
@@ -17,10 +17,10 @@ class LiveBroadcastScreen extends ConsumerStatefulWidget {
 class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
   final TextEditingController _titleController = TextEditingController();
 
-  late final String teacherId;
-  late final String classId;
-  LiveStreamParams? params;
+  late String subjectId;
+  late int classNumber;
 
+  LiveStreamParams? params;
   bool _cameraInitialized = false;
 
   @override
@@ -28,14 +28,23 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final query = GoRouterState.of(context).uri.queryParameters;
-      teacherId = query['teacherId'] ?? '';
-      classId = query['classId'] ?? '';
+      final s = GoRouterState.of(context);
+
+      final q = s.uri.queryParameters;
+      final qSubjectId = q['subjectId'];
+      final qClassNumber = int.tryParse(q['classNumber'] ?? '');
+
+      final p = s.pathParameters;
+      final pSubjectId = p['subjectId'];
+      final pClassNumber = int.tryParse(p['classNumber'] ?? '');
+
+      subjectId = (qSubjectId ?? pSubjectId ?? '').trim();
+      classNumber = (qClassNumber ?? pClassNumber ?? 1);
 
       setState(() {
         params = LiveStreamParams(
-          teacherId: teacherId,
-          classId: classId,
+          subjectId: subjectId,
+          classNumber: classNumber,
           title: 'Clase en Vivo',
         );
       });
@@ -68,7 +77,11 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
       return Scaffold(
         appBar: AppBar(title: const Text('Live')),
         body: Center(
-          child: Text(state.error!, style: const TextStyle(color: Colors.red)),
+          child: Text(
+            state.error!,
+            style: const TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -81,7 +94,6 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-
       body: LayoutBuilder(
         builder: (context, constraints) {
           final keyboardVisible =
@@ -89,7 +101,14 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
           return Stack(
             children: [
               Positioned.fill(
-                child: CameraPreview(state.camera!),
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: state.camera!.value.previewSize!.height,
+                    height: state.camera!.value.previewSize!.width,
+                    child: CameraPreview(state.camera!),
+                  ),
+                ),
               ),
               Positioned(
                 top: 50,
@@ -104,46 +123,77 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
                   },
                 ),
               ),
+              Positioned(
+                top: 50,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.cameraswitch, color: Colors.white),
+                  onPressed: notifier.switchCamera,
+                ),
+              ),
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 1),
                 curve: Curves.easeOut,
                 bottom: keyboardVisible
-                    ? MediaQuery.of(context).viewInsets.bottom
+                    ? MediaQuery.of(context).viewInsets.bottom + 10
                     : 130,
                 left: 20,
                 right: 20,
-                child: TextField(
-                  controller: _titleController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Add a title...',
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Título de la clase',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
-                    filled: true,
-                    fillColor: Colors.black54,
-                  ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 16),
+                          const Icon(Icons.edit, color: Colors.white54),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextField(
+                              controller: _titleController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                hintText: 'Agrega un título...',
+                                hintStyle: TextStyle(color: Colors.white54),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 16),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           );
         },
       ),
-
-      // ✅ FAB no se mueve nunca
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: GestureDetector(
         onTap: state.starting
             ? null
             : state.isStreaming
-                ? notifier.stopStream
+                ? notifier.stopAndComplete
                 : () => notifier.startStream(
                       _titleController.text.trim().isEmpty
-                          ? 'Clase en Vivo'
+                          ? (params!.title ?? 'Clase en Vivo')
                           : _titleController.text.trim(),
                     ),
         child: Container(

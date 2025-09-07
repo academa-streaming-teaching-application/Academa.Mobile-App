@@ -1,11 +1,12 @@
-import 'package:academa_streaming_platform/domain/entities/saved_asset_entity.dart';
+import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
 
-import '../entities/live_streaming_entity.dart';
-
-abstract class LiveStreamingRepository {
-  Future<LiveStreamingEntity> createSession({
-    required String classId,
-    required String teacherId,
-    required String title,
+abstract class LiveRepository {
+  Future<LiveSessionEntity> startLiveSession(
+    String subjectId,
+    int classNumber, {
+    DateTime? startsAt,
   });
+
+  // ✅ nuevo
+  Future<void> completeLiveSession(String sessionId);
 }

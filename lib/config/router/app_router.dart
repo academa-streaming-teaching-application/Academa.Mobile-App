@@ -107,19 +107,11 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/live-view',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const LiveBroadcastScreen(),
-        transitionDuration: const Duration(milliseconds: 400),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      ),
+      path: '/live',
+      name: 'live',
+      builder: (context, state) => const LiveBroadcastScreen(),
     ),
+
     GoRoute(
       path: '/player',
       pageBuilder: (context, state) {

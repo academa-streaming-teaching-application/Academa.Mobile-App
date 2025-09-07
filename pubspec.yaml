@@ -30,6 +30,7 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   crypto: ^3.0.6
   flutter_secure_storage: ^4.2.1
+  camerawesome: ^2.5.0
 
 dev_dependencies:
   riverpod_generator: ^2.3.0

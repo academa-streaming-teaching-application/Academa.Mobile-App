@@ -1,22 +1,26 @@
-import 'package:academa_streaming_platform/domain/entities/saved_asset_entity.dart';
+import 'package:academa_streaming_platform/domain/datasource/live_streaming_datasource.dart';
+import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
 import 'package:academa_streaming_platform/domain/repositories/live_streaming_repository.dart';
-import '../../domain/entities/live_streaming_entity.dart';
-import '../../domain/datasource/live_streaming_datasource.dart';
 
-class LiveStreamingRepositoryImpl implements LiveStreamingRepository {
-  final LiveStreamingDataSource _ds;
-  LiveStreamingRepositoryImpl(this._ds);
+class LiveRepositoryImpl implements LiveRepository {
+  final LiveDataSource _ds;
+  LiveRepositoryImpl(this._ds);
 
   @override
-  Future<LiveStreamingEntity> createSession({
-    required String classId, // ✅ changed: added
-    required String teacherId, // ✅ changed: added
-    required String title, // ✅ changed: added
+  Future<LiveSessionEntity> startLiveSession(
+    String subjectId,
+    int classNumber, {
+    DateTime? startsAt,
   }) {
-    return _ds.createLiveSession(
-      classId: classId, // ✅ changed
-      teacherId: teacherId, // ✅ changed
-      title: title, // ✅ changed
+    return _ds.startLiveSession(
+      subjectId: subjectId,
+      classNumber: classNumber,
+      startsAt: startsAt,
     );
+  }
+
+  @override
+  Future<void> completeLiveSession(String sessionId) {
+    return _ds.completeLiveSession(sessionId: sessionId);
   }
 }

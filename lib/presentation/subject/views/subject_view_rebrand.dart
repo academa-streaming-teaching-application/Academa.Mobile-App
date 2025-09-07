@@ -1,10 +1,12 @@
+// lib/presentation/subject/subject_view_rebrand.dart
+import 'package:academa_streaming_platform/presentation/auth/provider/user_provider.dart';
 import 'package:academa_streaming_platform/presentation/shared/shared_providers/subject_repository_providers.dart';
+import 'package:academa_streaming_platform/domain/entities/subject_entity.dart';
+import 'package:academa_streaming_platform/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../domain/entities/subject_entity.dart';
 
 class SubjectViewRebrand extends ConsumerWidget {
   final String subjectId;
@@ -13,28 +15,50 @@ class SubjectViewRebrand extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncSubject = ref.watch(subjectByIdProvider(subjectId));
+    final meAsync = ref.watch(currentUserProvider);
 
-    return Scaffold(
-      appBar: const SubjectViewAppBar(),
-      body: asyncSubject.when(
-        loading: () => const _LoadingView(),
-        error: (e, _) => _ErrorView(message: '$e'),
-        data: (subject) => _Content(subject: subject),
-      ),
+    return asyncSubject.when(
+      loading: () => const Scaffold(body: _LoadingView()),
+      error: (e, _) => Scaffold(body: _ErrorView(message: '$e')),
+      data: (subject) {
+        final me = meAsync.maybeWhen(data: (u) => u, orElse: () => null);
+        return Scaffold(
+          appBar: const SubjectViewAppBar(),
+          body: _Content(subject: subject, me: me),
+        );
+      },
     );
   }
 }
 
 class _Content extends StatelessWidget {
   final SubjectEntity subject;
-  const _Content({required this.subject});
+  final UserEntity? me;
+  const _Content({required this.subject, required this.me});
+
+  bool _isProfessorOwner(SubjectEntity s, UserEntity? me) {
+    if (me == null) return false;
+
+    // Intentamos ambas opciones según cómo llegue el profesor:
+    final professorId = (s.professor?.id?.toString().trim().isNotEmpty ?? false)
+        ? s.professor!.id.toString()
+        : (s.professor?.id.toString() ?? '');
+
+    return professorId.isNotEmpty && professorId == me.id;
+  }
+
+  int _nextClassNumber(SubjectEntity s) {
+    // Ejemplo simple: la siguiente clase
+    final n = (s.numberOfClasses ?? 0);
+    return (n >= 1) ? (n + 1) : 1;
+  }
 
   @override
   Widget build(BuildContext context) {
     final teacherName = _teacherFullName(subject);
     final hasDescription = subject.description.trim().isNotEmpty;
-    final hasVideos =
-        subject.numberOfClasses > 0; // cuando tengas assets, usa esa lista
+    final hasVideos = subject.numberOfClasses > 0;
+    final canStartLive = _isProfessorOwner(subject, me);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,
@@ -44,7 +68,6 @@ class _Content extends StatelessWidget {
           const SizedBox(height: 8),
           SubjectHeading(subject: subject),
           const SizedBox(height: 16),
-
           if (hasDescription) ...[
             const Text(
               'Sobre el curso',
@@ -56,7 +79,7 @@ class _Content extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              subject.description, // ← viene directo del backend
+              subject.description,
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
@@ -65,17 +88,20 @@ class _Content extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
-
-          // No mostramos si no hay
+          if (canStartLive)
+            _StartLiveButton(
+              subjectId: subject.id,
+              classNumber: _nextClassNumber(subject),
+            ),
+          const SizedBox(height: 32),
           if (hasVideos)
             ...List.generate(
-              subject.numberOfClasses, // luego cámbialo por assets.length
+              subject.numberOfClasses,
               (index) => const Padding(
                 padding: EdgeInsets.only(bottom: 16.0),
                 child: SubjectVideoCard(),
               ),
             ),
-
           const Text(
             'Profesor',
             style: TextStyle(
@@ -85,7 +111,6 @@ class _Content extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
@@ -106,8 +131,7 @@ class _Content extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -121,11 +145,36 @@ class _Content extends StatelessWidget {
   }
 }
 
-/*─────────────────────────── AppBar (sin cambios visuales) ────────────────────────────*/
+class _StartLiveButton extends StatelessWidget {
+  final String subjectId;
+  final int classNumber;
+  const _StartLiveButton({
+    super.key,
+    required this.subjectId,
+    required this.classNumber,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        minimumSize: const Size.fromHeight(48),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      onPressed: () {
+        // Navega a tu pantalla de broadcast (usa tu ruta real)
+        context.push('/live?subjectId=$subjectId&classNumber=$classNumber');
+      },
+      icon: const Icon(Icons.videocam_rounded),
+      label: const Text('Iniciar transmisión'),
+    );
+  }
+}
 
 class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   const SubjectViewAppBar({super.key});
-
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
@@ -159,8 +208,6 @@ class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-/*─────────────────────────── Video card (UI intacta) ────────────────────────────*/
 
 class SubjectVideoCard extends StatelessWidget {
   const SubjectVideoCard({super.key});
@@ -226,8 +273,6 @@ class SubjectVideoCard extends StatelessWidget {
   }
 }
 
-/*─────────────────────────── Heading (UI intacta, datos reales) ────────────────────────────*/
-
 class SubjectHeading extends StatelessWidget {
   final SubjectEntity subject;
   const SubjectHeading({super.key, required this.subject});
@@ -236,8 +281,7 @@ class SubjectHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     final classes = subject.numberOfClasses;
     final rating = subject.averageRating.clamp(0, 5).toStringAsFixed(1);
-    final students =
-        subject.studentIds.length; // cuando tengas studentsCount, úsalo aquí
+    final students = subject.studentIds.length;
     final title =
         subject.subject.isNotEmpty ? subject.subject : subject.category;
 
@@ -308,8 +352,6 @@ class SubjectHeading extends StatelessWidget {
     );
   }
 }
-
-/*─────────────────────────── Loading/Error ────────────────────────────*/
 
 class _LoadingView extends StatelessWidget {
   const _LoadingView();

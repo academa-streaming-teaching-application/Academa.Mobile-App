@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:academa_streaming_platform/domain/entities/user_entity.dart';
 
-/// Obtiene el usuario actual cuando hay accessToken.
 final currentUserProvider =
     FutureProvider.autoDispose<UserEntity?>((ref) async {
   final tokens = ref.watch(authTokensProvider);
@@ -16,7 +15,7 @@ final currentUserProvider =
 
   final dio = ref.read(dioProvider);
   try {
-    final resp = await dio.get('/auth/me'); // tu backend
+    final resp = await dio.get('/api/v1/auth/oauth/me');
     final data = resp.data;
 
     final Map<String, dynamic> raw = (data is Map && data['user'] is Map)
@@ -36,7 +35,6 @@ final currentUserProvider =
   }
 });
 
-/// Solo expone el rol. Si no hay usuario, devuelve '' (invitado).
 final currentUserRoleProvider = Provider.autoDispose<String>((ref) {
   final me = ref.watch(currentUserProvider);
   return me.maybeWhen(

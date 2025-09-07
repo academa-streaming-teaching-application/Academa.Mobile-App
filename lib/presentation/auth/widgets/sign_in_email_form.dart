@@ -42,7 +42,7 @@ class _SignInEmailFormState extends ConsumerState<SignInEmailForm> {
       hintStyle: const TextStyle(color: kBorder),
       enabledBorder: base,
       focusedBorder: base,
-      errorBorder: error, // mismo estilo, borde rojo
+      errorBorder: error,
       focusedErrorBorder: error,
       errorStyle: const TextStyle(color: Colors.red, fontSize: 12),
     );
