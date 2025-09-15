@@ -9,12 +9,14 @@ class LiveRepositoryImpl implements LiveRepository {
   @override
   Future<LiveSessionEntity> startLiveSession(
     String subjectId,
-    int classNumber, {
+    int classNumber,
+    String title, {
     DateTime? startsAt,
   }) {
     return _ds.startLiveSession(
       subjectId: subjectId,
       classNumber: classNumber,
+      title: title,
       startsAt: startsAt,
     );
   }

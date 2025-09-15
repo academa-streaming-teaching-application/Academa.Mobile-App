@@ -1,5 +1,4 @@
 // lib/presentation/live_chat/live_chat_message.dart
-
 import 'package:flutter/material.dart';
 
 class LiveChatMessage extends StatelessWidget {
@@ -21,15 +20,8 @@ class LiveChatMessage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 👤 Avatar
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(avatarUrl),
-          ),
-
+          CircleAvatar(radius: 16, backgroundImage: NetworkImage(avatarUrl)),
           const SizedBox(width: 8),
-
-          // 🧾 Burbuja de mensaje
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -38,20 +30,16 @@ class LiveChatMessage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      )),
-                  const SizedBox(height: 4),
-                  Text(message,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      )),
-                ],
-              ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        )),
+                    const SizedBox(height: 4),
+                    Text(message, style: const TextStyle(color: Colors.white)),
+                  ]),
             ),
           ),
         ],

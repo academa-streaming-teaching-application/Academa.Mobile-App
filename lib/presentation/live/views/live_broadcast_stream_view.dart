@@ -41,12 +41,15 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
       subjectId = (qSubjectId ?? pSubjectId ?? '').trim();
       classNumber = (qClassNumber ?? pClassNumber ?? 1);
 
+      final suggestedTitle = 'Clase $classNumber';
+
       setState(() {
         params = LiveStreamParams(
           subjectId: subjectId,
           classNumber: classNumber,
-          title: 'Clase en Vivo',
+          title: suggestedTitle,
         );
+        _titleController.text = suggestedTitle;
       });
     });
   }
@@ -119,7 +122,7 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
                     if (state.isStreaming) {
                       notifier.stopStream();
                     }
-                    context.pop();
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
@@ -165,14 +168,27 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
                           Expanded(
                             child: TextField(
                               controller: _titleController,
+                              textInputAction: TextInputAction.done,
                               style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 hintText: 'Agrega un título...',
                                 hintStyle: TextStyle(color: Colors.white54),
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 16),
+                                  horizontal: 0,
+                                  vertical: 16,
+                                ),
                               ),
+                              onSubmitted: (_) {
+                                if (!state.isStreaming && !state.starting) {
+                                  final typed = _titleController.text.trim();
+                                  final titleToSend = typed.isEmpty
+                                      ? (params!.title ??
+                                          'Clase ${params!.classNumber}')
+                                      : typed;
+                                  notifier.startStream(titleToSend);
+                                }
+                              },
                             ),
                           ),
                         ],
@@ -191,11 +207,13 @@ class _LiveBroadcastScreenState extends ConsumerState<LiveBroadcastScreen> {
             ? null
             : state.isStreaming
                 ? notifier.stopAndComplete
-                : () => notifier.startStream(
-                      _titleController.text.trim().isEmpty
-                          ? (params!.title ?? 'Clase en Vivo')
-                          : _titleController.text.trim(),
-                    ),
+                : () {
+                    final typed = _titleController.text.trim();
+                    final titleToSend = typed.isEmpty
+                        ? (params!.title ?? 'Clase ${params!.classNumber}')
+                        : typed;
+                    notifier.startStream(titleToSend);
+                  },
         child: Container(
           width: 72,
           height: 72,

@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Estructura: subjects/{subjectId}/classes/{classNumber}/messages/{messageId}
+    match /subjects/{subjectId}/classes/{classNumber} {
+      allow read: if true;           // cualquiera puede leer chat de la clase
+      allow create: if request.auth != null;  // opcional: crear doc padre
+
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if request.auth != null
+                      && request.resource.data.message is string
+                      && request.resource.data.message.size() <= 1000
+                      && request.resource.data.uid == request.auth.uid
+                      && request.resource.data.createdAt is timestamp;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

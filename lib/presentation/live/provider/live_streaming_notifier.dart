@@ -5,7 +5,7 @@ import 'package:academa_streaming_platform/presentation/live/provider/live_strea
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rtmp_broadcaster/camera.dart';
 
-/*─────────────────────────── STATE ────────────────────────────*/
+/*─────────────────────────── STATE & PARAMS ────────────────────────────*/
 class LiveStreamParams {
   final String subjectId;
   final int classNumber;
@@ -39,8 +39,6 @@ class LiveStreamingState {
   final bool isStreaming;
   final bool starting;
   final String? error;
-
-  // 🔹 campos necesarios para stop/complete y depurar ingest
   final String? sessionId;
   final String? liveStreamId;
   final String? streamKey;
@@ -76,6 +74,7 @@ class LiveStreamingState {
   }
 }
 
+/*─────────────────────────── NOTIFIER ────────────────────────────*/
 class LiveStreamingNotifier
     extends AutoDisposeFamilyNotifier<LiveStreamingState, LiveStreamParams> {
   late final LiveRepository _repo;
@@ -92,7 +91,6 @@ class LiveStreamingNotifier
   Future<void> initCamera() async {
     try {
       final cameras = await availableCameras();
-      // Se selecciona la cámara trasera por defecto
       final selected = cameras.firstWhere(
         (c) => c.lensDirection == CameraLensDirection.back,
         orElse: () => cameras.first,
@@ -107,7 +105,7 @@ class LiveStreamingNotifier
 
       state = state.copyWith(
         camera: controller,
-        cameraDescription: selected, // Se guarda la descripción
+        cameraDescription: selected,
         cameraReady: true,
         error: null,
       );
@@ -117,9 +115,7 @@ class LiveStreamingNotifier
   }
 
   Future<void> switchCamera() async {
-    if (state.isStreaming || state.cameraDescription == null) {
-      return;
-    }
+    if (state.isStreaming || state.cameraDescription == null) return;
 
     await state.camera!.dispose();
 
@@ -139,7 +135,7 @@ class LiveStreamingNotifier
 
       state = state.copyWith(
         camera: controller,
-        cameraDescription: newCamera, // Se actualiza la descripción
+        cameraDescription: newCamera,
         cameraReady: true,
         error: null,
       );
@@ -148,14 +144,21 @@ class LiveStreamingNotifier
     }
   }
 
-  Future<void> startStream([String? title]) async {
+  Future<void> startStream([String? uiTitle]) async {
     if (!state.cameraReady || state.starting) return;
     state = state.copyWith(starting: true, error: null);
 
     try {
+      final safeTitle = (uiTitle != null && uiTitle.trim().isNotEmpty)
+          ? uiTitle.trim()
+          : (_params.title?.trim().isNotEmpty == true
+              ? _params.title!.trim()
+              : 'Clase ${_params.classNumber}');
+
       final session = await _repo.startLiveSession(
         _params.subjectId,
         _params.classNumber,
+        safeTitle,
       );
 
       state = state.copyWith(
@@ -171,8 +174,6 @@ class LiveStreamingNotifier
         ingest = 'rtmp://global-live.mux.com:5222/app';
       }
       final url = '$ingest/${state.streamKey}';
-
-      print("url rtpm:" + " " + url);
 
       await state.camera!.startVideoStreaming(
         url,
@@ -195,7 +196,6 @@ class LiveStreamingNotifier
       state = state.copyWith(isStreaming: false);
     }
 
-    // 2) avisar al backend para forzar cierre inmediato del live
     final sid = state.sessionId;
     if (sid != null && sid.isNotEmpty) {
       try {

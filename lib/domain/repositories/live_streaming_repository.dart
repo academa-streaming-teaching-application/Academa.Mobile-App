@@ -3,7 +3,8 @@ import 'package:academa_streaming_platform/domain/entities/live_streaming_entity
 abstract class LiveRepository {
   Future<LiveSessionEntity> startLiveSession(
     String subjectId,
-    int classNumber, {
+    int classNumber,
+    String title, {
     DateTime? startsAt,
   });
 
