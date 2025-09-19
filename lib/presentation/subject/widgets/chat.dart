@@ -65,6 +65,8 @@ class _ClassChatBottomSheetState extends ConsumerState<ClassChatBottomSheet> {
       return;
     }
 
+    // Clear the input field immediately for better UX
+    _messageController.clear();
     setState(() => _isSending = true);
 
     try {
@@ -77,15 +79,16 @@ class _ClassChatBottomSheetState extends ConsumerState<ClassChatBottomSheet> {
 
       await messagesRef.add({
         'message': message,
-        'uid': fbUser.uid, // <-- CAMBIO: usar UID de Firebase
+        'uid': fbUser.uid,
         'userName': '${appUser.name} ${appUser.lastName}'.trim(),
         'userImage': appUser.image ?? '',
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      _messageController.clear();
       _scrollToBottom();
     } catch (e) {
+      // If sending fails, restore the message in the input field
+      _messageController.text = message;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al enviar mensaje: $e')),

@@ -3,14 +3,13 @@ import 'package:academa_streaming_platform/data/datasource/subject_datasource_im
 import 'package:academa_streaming_platform/data/repositories/subject_repository_impl.dart';
 import 'package:academa_streaming_platform/domain/entities/subject_entity.dart';
 import 'package:academa_streaming_platform/domain/repositories/subject_repository.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/provider/auth_repositoy_provider.dart';
 
 final subjectRepositoryProvider = Provider<SubjectRepository>((ref) {
-  final baseUrl = dotenv.env['API_BASE_URL']!;
+  final dio = ref.watch(dioProvider);
   return SubjectRepositoryImpl(
-    SubjectDataSourceImpl(Dio(BaseOptions(baseUrl: baseUrl))),
+    SubjectDataSourceImpl(dio),
   );
 });
 

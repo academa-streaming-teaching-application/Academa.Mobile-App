@@ -1,10 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../auth/provider/auth_repositoy_provider.dart';
 
-class ProfileRebrandView extends StatelessWidget {
+class ProfileRebrandView extends ConsumerWidget {
   const ProfileRebrandView({super.key});
 
+  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xff1D1D1E),
+        title: const Text(
+          'Cerrar Sesión',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          '¿Estás seguro de que quieres cerrar sesión?',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Cerrar Sesión'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        // Get current refresh token
+        final tokens = ref.read(authTokensProvider);
+        final refreshToken = tokens.refreshToken;
+
+        if (refreshToken != null) {
+          // Call logout on the repository
+          final authRepo = ref.read(authRepositoryProvider);
+          await authRepo.logout(refreshToken);
+        }
+
+        // Clear tokens from secure storage
+        await ref.read(authTokensProvider.notifier).clear();
+
+        // Navigate to login/home screen
+        if (context.mounted) {
+          context.go('/sign-in');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al cerrar sesión: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -50,7 +112,15 @@ class ProfileRebrandView extends StatelessWidget {
                     rowIcon: Icons.mail_outline_rounded,
                     label: 'Mail',
                     value: 'duquehugo08@gmail.com',
-                    enableBottomBorder: false,
+                  ),
+                  GestureDetector(
+                    onTap: () => context.push('/my-subjects'),
+                    child: ProfileRowDetail(
+                      rowIcon: Icons.school_outlined,
+                      label: 'My Subjects',
+                      value: '',
+                      enableBottomBorder: false,
+                    ),
                   ),
                 ],
               ),
@@ -116,11 +186,14 @@ class ProfileRebrandView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  ProfileRowDetail(
-                    rowIcon: Icons.logout_rounded,
-                    label: 'Cerrar Sesión',
-                    value: '',
-                    enableNavigationIcon: false,
+                  GestureDetector(
+                    onTap: () => _handleLogout(context, ref),
+                    child: ProfileRowDetail(
+                      rowIcon: Icons.logout_rounded,
+                      label: 'Cerrar Sesión',
+                      value: '',
+                      enableNavigationIcon: false,
+                    ),
                   ),
                   ProfileRowDetail(
                     rowIcon: Icons.delete_outline_rounded,

@@ -10,7 +10,7 @@ class SubjectRepositoryImpl implements SubjectRepository {
   SubjectRepositoryImpl(this.dataSource);
 
   @override
-  Future<List<SubjectEntity>> getAllSubjects({String? userId}) {
+  Future<List<SubjectEntity>> getAllSubjects() {
     return dataSource.getAllSubjects();
   }
 
@@ -47,5 +47,25 @@ class SubjectRepositoryImpl implements SubjectRepository {
       userId: userId,
       follow: follow,
     );
+  }
+
+  @override
+  Future<void> subscribeToSubject(String subjectId) {
+    return dataSource.subscribeToSubject(subjectId);
+  }
+
+  @override
+  Future<void> unsubscribeFromSubject(String subjectId) {
+    return dataSource.unsubscribeFromSubject(subjectId);
+  }
+
+  @override
+  Future<bool> getSubscriptionStatus(String subjectId) {
+    return dataSource.getSubscriptionStatus(subjectId);
+  }
+
+  @override
+  Future<List<SubjectEntity>> getFollowedSubjects() {
+    return dataSource.getFollowedSubjects();
   }
 }

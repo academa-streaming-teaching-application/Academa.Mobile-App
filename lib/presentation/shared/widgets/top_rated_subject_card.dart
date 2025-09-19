@@ -47,23 +47,6 @@ class TopRatedSubjectCard extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(50, 0, 0, 0),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
                 const Positioned(
                   left: 0,
                   top: 0,

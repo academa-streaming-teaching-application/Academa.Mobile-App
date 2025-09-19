@@ -5,6 +5,8 @@ import 'package:academa_streaming_platform/presentation/shared/shared_providers/
 import 'package:academa_streaming_platform/domain/entities/subject_entity.dart';
 import 'package:academa_streaming_platform/domain/entities/user_entity.dart';
 import 'package:academa_streaming_platform/presentation/subject/provider/live_session_provider.dart';
+import 'package:academa_streaming_platform/presentation/subject/widgets/subscription_button.dart';
+import 'package:academa_streaming_platform/presentation/subject/provider/subject_subscription_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,7 +33,10 @@ class SubjectViewRebrand extends ConsumerWidget {
         );
 
         return Scaffold(
-          appBar: const SubjectViewAppBar(),
+          appBar: SubjectViewAppBar(
+            subject: subject,
+            me: me,
+          ),
           body: _Content(
             subject: subject,
             sessions: sessions,
@@ -481,13 +486,52 @@ class _StartLiveButton extends StatelessWidget {
   }
 }
 
-class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const SubjectViewAppBar({super.key});
+class SubjectViewAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
+  final SubjectEntity subject;
+  final UserEntity? me;
+
+  const SubjectViewAppBar({
+    super.key,
+    required this.subject,
+    required this.me,
+  });
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
+  ConsumerState<SubjectViewAppBar> createState() => _SubjectViewAppBarState();
+}
+
+class _SubjectViewAppBarState extends ConsumerState<SubjectViewAppBar> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.me != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(subjectSubscriptionProvider.notifier)
+            .checkSubscriptionStatus(widget.subject.id);
+      });
+    }
+  }
+
+  bool _isProfessorOwner() {
+    if (widget.me == null) return false;
+    final professorId = widget.subject.professor?.id?.toString() ?? '';
+    return professorId.isNotEmpty && professorId == widget.me!.id;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final subscriptionState = ref.watch(subjectSubscriptionProvider);
+    final subscriptionNotifier = ref.read(subjectSubscriptionProvider.notifier);
+    final isSubscribed = subscriptionNotifier.isSubscribed(widget.subject.id);
+    final isLoading = subscriptionState.isLoading;
+    final isProfessor = _isProfessorOwner();
+    final canSubscribe = widget.me != null && !isProfessor;
+
     return AppBar(
       forceMaterialTransparency: true,
       leading: IconButton(
@@ -503,15 +547,41 @@ class SubjectViewAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      actions: const [
-        IconButton(
-          onPressed: null,
-          icon: Icon(Icons.add_circle_outline_rounded, color: Colors.white),
-        ),
-        IconButton(
-          onPressed: null,
-          icon: Icon(Icons.ios_share_rounded, color: Colors.white),
-        ),
+      actions: [
+        if (canSubscribe)
+          IconButton(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    if (isSubscribed) {
+                      await subscriptionNotifier
+                          .unsubscribeFromSubject(widget.subject.id);
+                    } else {
+                      await subscriptionNotifier
+                          .subscribeToSubject(widget.subject.id);
+                    }
+                  },
+            icon: isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Icon(
+                    isSubscribed
+                        ? Icons.check_circle
+                        : Icons.add_circle_outline_rounded,
+                    color: isSubscribed ? Colors.green : Colors.white,
+                  ),
+          )
+        else
+          const IconButton(
+            onPressed: null,
+            icon: Icon(Icons.add_circle_outline_rounded, color: Colors.grey),
+          ),
       ],
     );
   }

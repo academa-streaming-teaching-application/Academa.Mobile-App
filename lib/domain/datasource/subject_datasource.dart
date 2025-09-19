@@ -17,4 +17,12 @@ abstract class SubjectDataSource {
     required String userId,
     required bool follow,
   });
+
+  Future<void> subscribeToSubject(String subjectId);
+
+  Future<void> unsubscribeFromSubject(String subjectId);
+
+  Future<bool> getSubscriptionStatus(String subjectId);
+
+  Future<List<SubjectEntity>> getFollowedSubjects();
 }

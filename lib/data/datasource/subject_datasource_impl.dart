@@ -187,4 +187,70 @@ class SubjectDataSourceImpl implements SubjectDataSource {
     final reason = e.response?.statusMessage ?? e.message ?? 'DioException';
     return '$label falló (status=$sc): $reason';
   }
+
+  @override
+  Future<void> subscribeToSubject(String subjectId) async {
+    final String url = '$basePath/$subjectId/subscribe';
+    try {
+      await dio.post(url);
+    } on DioException catch (e, st) {
+      _logDioError('POST $url', e, st);
+      throw Exception(_formatDioMessage('POST $url', e));
+    } catch (e, st) {
+      _logGenericError('POST $url', e, st);
+      throw Exception('Error subscribing to subject: $e');
+    }
+  }
+
+  @override
+  Future<void> unsubscribeFromSubject(String subjectId) async {
+    final String url = '$basePath/$subjectId/subscribe';
+    try {
+      await dio.delete(url);
+    } on DioException catch (e, st) {
+      _logDioError('DELETE $url', e, st);
+      throw Exception(_formatDioMessage('DELETE $url', e));
+    } catch (e, st) {
+      _logGenericError('DELETE $url', e, st);
+      throw Exception('Error unsubscribing from subject: $e');
+    }
+  }
+
+  @override
+  Future<bool> getSubscriptionStatus(String subjectId) async {
+    final String url = '$basePath/$subjectId/subscription-status';
+    try {
+      final Response resp = await dio.get(url);
+      final Map<String, dynamic> root = Map<String, dynamic>.from(resp.data);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(root['data']);
+      return data['isSubscribed'] as bool? ?? false;
+    } on DioException catch (e, st) {
+      _logDioError('GET $url', e, st);
+      throw Exception(_formatDioMessage('GET $url', e));
+    } catch (e, st) {
+      _logGenericError('GET $url', e, st);
+      throw Exception('Error checking subscription status: $e');
+    }
+  }
+
+  @override
+  Future<List<SubjectEntity>> getFollowedSubjects() async {
+    const String url = '/api/v1/users/me/subjects';
+    try {
+      final Response resp = await dio.get(url);
+      final Map<String, dynamic> root = Map<String, dynamic>.from(resp.data);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(root['data']);
+      final List<dynamic> rawList = List<dynamic>.from(data['subjects']);
+
+      return rawList
+          .map((e) => _mapSubject(Map<String, dynamic>.from(e)))
+          .toList();
+    } on DioException catch (e, st) {
+      _logDioError('GET $url', e, st);
+      throw Exception(_formatDioMessage('GET $url', e));
+    } catch (e, st) {
+      _logGenericError('GET $url', e, st);
+      throw Exception('Error fetching followed subjects: $e');
+    }
+  }
 }
