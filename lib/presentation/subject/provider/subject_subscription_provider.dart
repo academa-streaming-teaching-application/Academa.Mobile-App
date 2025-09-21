@@ -101,7 +101,5 @@ final subjectSubscriptionProvider = StateNotifierProvider<SubjectSubscriptionNot
   return SubjectSubscriptionNotifier(repository);
 });
 
-final followedSubjectsProvider = FutureProvider<List<SubjectEntity>>((ref) async {
-  final repository = ref.watch(subjectRepositoryProvider);
-  return repository.getFollowedSubjects();
-});
+// Note: followedSubjectsProvider has been moved to shared_providers/subject_repository_providers.dart
+// to avoid duplication and ensure proper authentication dependency

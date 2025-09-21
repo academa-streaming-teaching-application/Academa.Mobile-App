@@ -1,5 +1,6 @@
 // presentation/video/video_player_screen.dart
 import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
+import 'package:academa_streaming_platform/domain/entities/watch_history_entity.dart';
 import 'package:academa_streaming_platform/presentation/shared/shared_providers/watch_history_repository_providers.dart';
 import 'package:academa_streaming_platform/presentation/subject/provider/live_session_provider.dart';
 import 'package:academa_streaming_platform/presentation/subject/widgets/chat.dart';
@@ -73,6 +74,12 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
 
     try {
       await _controller!.initialize();
+
+      // Resume from saved position for VOD content
+      if (session.isRecorded) {
+        await _resumeFromWatchHistory(session.id);
+      }
+
       await _controller!.play();
       _controller!.addListener(_onControllerTick);
       setState(() {
@@ -90,6 +97,34 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     } finally {
       old?.removeListener(_onControllerTick);
       await old?.dispose();
+    }
+  }
+
+  Future<void> _resumeFromWatchHistory(String sessionId) async {
+    try {
+      final watchHistoryRepository = ref.read(watchHistoryRepositoryProvider);
+      final watchHistoryParams = const WatchHistoryParams(limit: 50);
+      final watchHistory = await watchHistoryRepository.getWatchHistory(
+        limit: watchHistoryParams.limit,
+        offset: watchHistoryParams.offset,
+      );
+
+      // Find the watch history entry for this session
+      final historyEntry = watchHistory
+          .cast<WatchHistoryEntity?>()
+          .firstWhere(
+            (entry) => entry?.sessionId == sessionId,
+            orElse: () => null,
+          );
+
+      if (historyEntry != null && historyEntry.watchedDuration > 0) {
+        // Seek to the saved position
+        final resumePosition = Duration(seconds: historyEntry.watchedDuration);
+        await _controller!.seekTo(resumePosition);
+      }
+    } catch (error) {
+      // Silently handle errors to avoid disrupting playback
+      debugPrint('Error resuming from watch history: $error');
     }
   }
 
@@ -147,11 +182,6 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     );
   }
 
-  void _stopProgressTracking() {
-    _progressTimer?.cancel();
-    _progressTimer = null;
-  }
-
   void _trackWatchProgress() {
     if (_controller == null ||
         !_controller!.value.isInitialized ||
@@ -182,11 +212,22 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
 
   @override
   void dispose() {
-    _stopProgressTracking();
+    // Pause video before disposing
+    _controller?.pause();
+
+    // Cancel progress tracking timer
+    _progressTimer?.cancel();
+
+    // Remove listener and dispose controller
     _controller?.removeListener(_onControllerTick);
     _controller?.dispose();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    // Reset system UI when leaving fullscreen
+    if (_isFullScreen) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    }
+
     super.dispose();
   }
 

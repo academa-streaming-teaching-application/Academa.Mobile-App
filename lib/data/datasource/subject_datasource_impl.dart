@@ -253,4 +253,25 @@ class SubjectDataSourceImpl implements SubjectDataSource {
       throw Exception('Error fetching followed subjects: $e');
     }
   }
+
+  @override
+  Future<List<SubjectEntity>> getTeachingSubjects() async {
+    const String url = '/api/v1/users/me/teaching-subjects';
+    try {
+      final Response resp = await dio.get(url);
+      final Map<String, dynamic> root = Map<String, dynamic>.from(resp.data);
+      final Map<String, dynamic> data = Map<String, dynamic>.from(root['data']);
+      final List<dynamic> rawList = List<dynamic>.from(data['subjects']);
+
+      return rawList
+          .map((e) => _mapSubject(Map<String, dynamic>.from(e)))
+          .toList();
+    } on DioException catch (e, st) {
+      _logDioError('GET $url', e, st);
+      throw Exception(_formatDioMessage('GET $url', e));
+    } catch (e, st) {
+      _logGenericError('GET $url', e, st);
+      throw Exception('Error fetching teaching subjects: $e');
+    }
+  }
 }

@@ -38,6 +38,12 @@ final topRatedSubjectsFutureProvider = FutureProvider.autoDispose
   );
 });
 
+final refreshTopRatedSubjectsProvider = Provider<void Function()>((ref) {
+  return () {
+    ref.invalidate(topRatedSubjectsFutureProvider);
+  };
+});
+
 final subjectByIdProvider =
     FutureProvider.autoDispose.family<SubjectEntity, String>((ref, id) {
   final repo = ref.watch(subjectRepositoryProvider);
@@ -70,4 +76,40 @@ final subjectsSearchProvider =
     },
     orElse: () => const [],
   );
+});
+
+final followedSubjectsProvider =
+    FutureProvider.autoDispose<List<SubjectEntity>>((ref) async {
+  // Wait for auth tokens to be loaded before making the request
+  final authTokens = ref.watch(authTokensProvider);
+
+  // If no access token, return empty list (user not authenticated)
+  if (authTokens.accessToken == null) {
+    return <SubjectEntity>[];
+  }
+
+  final repo = ref.watch(subjectRepositoryProvider);
+
+  final link = ref.keepAlive();
+  Timer(const Duration(minutes: 10), link.close);
+
+  return repo.getFollowedSubjects();
+});
+
+final teacherOwnSubjectsProvider =
+    FutureProvider.autoDispose<List<SubjectEntity>>((ref) async {
+  // Wait for auth tokens to be loaded before making the request
+  final authTokens = ref.watch(authTokensProvider);
+
+  // If no access token, return empty list (user not authenticated)
+  if (authTokens.accessToken == null) {
+    return <SubjectEntity>[];
+  }
+
+  final repo = ref.watch(subjectRepositoryProvider);
+
+  final link = ref.keepAlive();
+  Timer(const Duration(minutes: 10), link.close);
+
+  return repo.getTeachingSubjects();
 });

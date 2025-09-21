@@ -56,35 +56,6 @@ class SignInButtons extends ConsumerWidget {
         const Separator(text: 'Ingresa con', color: Color(0xff939398)),
         const SizedBox(height: 16),
 
-        // Apple
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed:
-                loading ? null : () => _handle(ref, context, apple: true),
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all(const Color(0xff1D1D1E)),
-              foregroundColor: MaterialStateProperty.all(Colors.white),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset('lib/config/assets/apple_icon.svg',
-                    width: 24, height: 24),
-                const SizedBox(width: 16),
-                const Text('Continúa con Apple',
-                    style: TextStyle(fontSize: 16)),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
         // Google
         SizedBox(
           width: double.infinity,

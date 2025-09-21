@@ -25,4 +25,6 @@ abstract class SubjectDataSource {
   Future<bool> getSubscriptionStatus(String subjectId);
 
   Future<List<SubjectEntity>> getFollowedSubjects();
+
+  Future<List<SubjectEntity>> getTeachingSubjects();
 }

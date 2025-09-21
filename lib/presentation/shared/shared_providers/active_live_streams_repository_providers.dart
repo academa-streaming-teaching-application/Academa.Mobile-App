@@ -15,10 +15,24 @@ final activeLiveStreamsRepositoryProvider = Provider<ActiveLiveStreamsRepository
 
 final activeLiveStreamsProvider =
     FutureProvider.autoDispose<List<LiveSessionEntity>>((ref) async {
+  // Wait for auth tokens to be loaded before making the request
+  final authTokens = ref.watch(authTokensProvider);
+
+  // If no access token, return empty list (user not authenticated)
+  if (authTokens.accessToken == null) {
+    return <LiveSessionEntity>[];
+  }
+
   final repository = ref.watch(activeLiveStreamsRepositoryProvider);
 
   final link = ref.keepAlive();
   Timer(const Duration(minutes: 2), link.close);
 
   return repository.getActiveLiveStreams();
+});
+
+final refreshActiveLiveStreamsProvider = Provider<void Function()>((ref) {
+  return () {
+    ref.invalidate(activeLiveStreamsProvider);
+  };
 });

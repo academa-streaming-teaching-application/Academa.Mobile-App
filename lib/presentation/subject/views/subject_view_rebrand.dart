@@ -5,8 +5,8 @@ import 'package:academa_streaming_platform/presentation/shared/shared_providers/
 import 'package:academa_streaming_platform/domain/entities/subject_entity.dart';
 import 'package:academa_streaming_platform/domain/entities/user_entity.dart';
 import 'package:academa_streaming_platform/presentation/subject/provider/live_session_provider.dart';
-import 'package:academa_streaming_platform/presentation/subject/widgets/subscription_button.dart';
 import 'package:academa_streaming_platform/presentation/subject/provider/subject_subscription_provider.dart';
+import 'package:academa_streaming_platform/presentation/subject/widgets/subject_rating_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,6 +15,16 @@ import 'package:go_router/go_router.dart';
 class SubjectViewRebrand extends ConsumerWidget {
   final String subjectId;
   const SubjectViewRebrand({super.key, required this.subjectId});
+
+  Future<void> _refreshData(WidgetRef ref) async {
+    // Invalidate all providers to force refresh
+    ref.invalidate(subjectByIdProvider(subjectId));
+    ref.invalidate(subjectLiveSessionsProvider(subjectId));
+    ref.invalidate(currentUserProvider);
+
+    // Wait a bit to ensure the refresh animation shows
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,11 +47,14 @@ class SubjectViewRebrand extends ConsumerWidget {
             subject: subject,
             me: me,
           ),
-          body: _Content(
-            subject: subject,
-            sessions: sessions,
-            me: me,
-            isLoadingSessions: asyncSessions.isLoading,
+          body: RefreshIndicator(
+            onRefresh: () => _refreshData(ref),
+            child: _Content(
+              subject: subject,
+              sessions: sessions,
+              me: me,
+              isLoadingSessions: asyncSessions.isLoading,
+            ),
           ),
         );
       },
@@ -49,7 +62,7 @@ class SubjectViewRebrand extends ConsumerWidget {
   }
 }
 
-class _Content extends StatelessWidget {
+class _Content extends ConsumerWidget {
   final SubjectEntity subject;
   final List<LiveSessionEntity> sessions;
   final UserEntity? me;
@@ -80,7 +93,7 @@ class _Content extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final teacherName = _teacherFullName(subject);
     final hasDescription = subject.description.trim().isNotEmpty;
     final canStartLive = _isProfessorOwner(subject, me);
@@ -89,6 +102,7 @@ class _Content extends StatelessWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         children: [
           const SizedBox(height: 8),
@@ -208,6 +222,16 @@ class _Content extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 24),
+
+          // Rating section
+          SubjectRatingForm(
+            subjectId: subject.id,
+            onRatingSubmitted: () {
+              ref.invalidate(subjectByIdProvider(subject.id));
+            },
+          ),
+
           const SizedBox(height: 24),
         ],
       ),
@@ -517,10 +541,10 @@ class _SubjectViewAppBarState extends ConsumerState<SubjectViewAppBar> {
     }
   }
 
-  bool _isProfessorOwner() {
+  bool _isTeacher() {
     if (widget.me == null) return false;
-    final professorId = widget.subject.professor?.id?.toString() ?? '';
-    return professorId.isNotEmpty && professorId == widget.me!.id;
+    // Assuming your UserEntity has a role field
+    return widget.me!.role == 'teacher' || widget.me!.role == 'professor';
   }
 
   @override
@@ -529,8 +553,8 @@ class _SubjectViewAppBarState extends ConsumerState<SubjectViewAppBar> {
     final subscriptionNotifier = ref.read(subjectSubscriptionProvider.notifier);
     final isSubscribed = subscriptionNotifier.isSubscribed(widget.subject.id);
     final isLoading = subscriptionState.isLoading;
-    final isProfessor = _isProfessorOwner();
-    final canSubscribe = widget.me != null && !isProfessor;
+    final isTeacher = _isTeacher();
+    final canSubscribe = !isTeacher;
 
     return AppBar(
       forceMaterialTransparency: true,

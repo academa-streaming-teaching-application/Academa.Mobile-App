@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/home/views/home_page_rebrand.dart';
+import '../../presentation/home/views/role_based_home_page.dart';
 import '../../presentation/profile/views/profile_rebrand_view.dart';
 import '../../presentation/roadmap/views/subject_in_roadmap_view.dart';
 import '../../presentation/search/views/search_view.dart';
@@ -47,7 +48,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/',
-              builder: (context, state) => const HomePageRebrand(),
+              builder: (context, state) => const RoleBasedHomePage(),
             ),
           ],
         ),
@@ -127,6 +128,25 @@ final appRouter = GoRouter(
               FadeTransition(opacity: a, child: child),
         );
       },
+    ),
+
+    GoRoute(
+      path: '/create-subject',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const Scaffold(
+          body: Center(
+            child: Text(
+              'Create Subject Page - Coming Soon',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
     ),
   ],
 );

@@ -16,6 +16,16 @@ import '../../../domain/entities/subject_entity.dart';
 class HomePageRebrand extends ConsumerWidget {
   const HomePageRebrand({super.key});
 
+  Future<void> _refreshData(WidgetRef ref) async {
+    // Invalidate all providers to force refresh
+    ref.invalidate(activeLiveStreamsProvider);
+    ref.invalidate(watchHistoryProvider);
+    ref.invalidate(topRatedSubjectsFutureProvider);
+
+    // Wait a bit to ensure the refresh animation shows
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final params = const TopRatedParams(limit: 10, minRatings: 3);
@@ -29,6 +39,8 @@ class HomePageRebrand extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.black,
         title: Row(
           children: [
             SvgPicture.asset('lib/config/assets/academa_logo.svg',
@@ -40,108 +52,112 @@ class HomePageRebrand extends ConsumerWidget {
           ],
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Live Activos
-            const _SectionTitle('Live Activos'),
-            SizedBox(
-              height: 300,
-              child: activeLiveStreamsAsync.when(
-                loading: () => const _LoadingList(height: 300),
-                error: (e, _) =>
-                    _ErrorMessage(message: 'Error al cargar lives: $e'),
-                data: (liveStreams) {
-                  if (liveStreams.isEmpty) {
-                    return const Center(
-                      child: Text('No hay streams activos en este momento.',
-                          style: TextStyle(color: Colors.white70)),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: liveStreams.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (_, index) => OnLiveVideoCard(
-                      liveStream: liveStreams[index],
-                      onTap: () {
-                        context.push(
-                            '/video-player/${liveStreams[index].subjectId}/${liveStreams[index].classNumber}');
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshData(ref),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Live Activos
+                const _SectionTitle('Live Activos'),
+                SizedBox(
+                  height: 300,
+                  child: activeLiveStreamsAsync.when(
+                    loading: () => const _LoadingList(height: 300),
+                    error: (e, _) =>
+                        _ErrorMessage(message: 'Error al cargar lives: $e'),
+                    data: (liveStreams) {
+                      if (liveStreams.isEmpty) {
+                        return const Center(
+                          child: Text('No hay streams activos en este momento.',
+                              style: TextStyle(color: Colors.white70)),
+                        );
+                      }
+                      return ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: liveStreams.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        itemBuilder: (_, index) => OnLiveVideoCard(
+                          liveStream: liveStreams[index],
+                          onTap: () {
+                            context.push(
+                                '/video-player/${liveStreams[index].subjectId}/${liveStreams[index].classNumber}');
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
 
-            // Continúa viendo
-            const _SectionTitle('Continúa viendo'),
-            SizedBox(
-              height: 100,
-              child: watchHistoryAsync.when(
-                loading: () => const _LoadingList(height: 100),
-                error: (e, _) =>
-                    _ErrorMessage(message: 'Error al cargar historial: $e'),
-                data: (watchHistory) {
-                  if (watchHistory.isEmpty) {
-                    return const Center(
-                      child: Text('No hay videos en progreso.',
-                          style: TextStyle(color: Colors.white70)),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: watchHistory.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (_, index) => KeepWatchingCard(
-                      watchHistory: watchHistory[index],
-                      onTap: () {
-                        // Navigate to continue watching
-                        // Navigator.push(context, MaterialPageRoute(
-                        //   builder: (context) => VideoPlayerScreen(
-                        //     subjectId: watchHistory[index].subjectId,
-                        //     classNumber: watchHistory[index].classNumber,
-                        //   ),
-                        // ));
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
+                // Continúa viendo
+                const _SectionTitle('Continúa viendo'),
+                SizedBox(
+                  height: 100,
+                  child: watchHistoryAsync.when(
+                    loading: () => const _LoadingList(height: 100),
+                    error: (e, _) =>
+                        _ErrorMessage(message: 'Error al cargar historial: $e'),
+                    data: (watchHistory) {
+                      if (watchHistory.isEmpty) {
+                        return const Center(
+                          child: Text('No hay videos en progreso.',
+                              style: TextStyle(color: Colors.white70)),
+                        );
+                      }
+                      return ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: watchHistory.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        itemBuilder: (_, index) => KeepWatchingCard(
+                          watchHistory: watchHistory[index],
+                          onTap: () {
+                            context.push(
+                                '/video-player/${watchHistory[index].subjectId}/${watchHistory[index].classNumber}');
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
 
-            // Top Clases
-            const _SectionTitle('Top Clases'),
-            SizedBox(
-              height: 250,
-              child: topRatedAsync.when(
-                loading: () => const _TopRatedLoadingList(),
-                error: (e, _) => _TopRatedError(message: '$e'),
-                data: (List<SubjectEntity> subjects) {
-                  if (subjects.isEmpty) {
-                    return const Center(
-                      child: Text('No hay materias con ratings suficientes.',
-                          style: TextStyle(color: Colors.white70)),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: subjects.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 16),
-                    itemBuilder: (context, i) =>
-                        TopRatedSubjectCard(subject: subjects[i]),
-                  );
-                },
-              ),
+                // Top Clases
+                const _SectionTitle('Top Clases'),
+                SizedBox(
+                  height: 250,
+                  child: topRatedAsync.when(
+                    loading: () => const _TopRatedLoadingList(),
+                    error: (e, _) => _TopRatedError(message: '$e'),
+                    data: (List<SubjectEntity> subjects) {
+                      if (subjects.isEmpty) {
+                        return const Center(
+                          child: Text(
+                              'No hay materias con ratings suficientes.',
+                              style: TextStyle(color: Colors.white70)),
+                        );
+                      }
+                      return ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: subjects.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 16),
+                        itemBuilder: (context, i) =>
+                            TopRatedSubjectCard(subject: subjects[i]),
+                      );
+                    },
+                  ),
+                ),
+                // Add some bottom padding to ensure content doesn't get cut off
+                const SizedBox(height: 20),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

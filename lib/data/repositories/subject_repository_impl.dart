@@ -68,4 +68,9 @@ class SubjectRepositoryImpl implements SubjectRepository {
   Future<List<SubjectEntity>> getFollowedSubjects() {
     return dataSource.getFollowedSubjects();
   }
+
+  @override
+  Future<List<SubjectEntity>> getTeachingSubjects() {
+    return dataSource.getTeachingSubjects();
+  }
 }

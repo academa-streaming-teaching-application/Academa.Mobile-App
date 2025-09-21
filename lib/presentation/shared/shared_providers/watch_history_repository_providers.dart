@@ -36,6 +36,14 @@ class WatchHistoryParams {
 
 final watchHistoryProvider = FutureProvider.autoDispose
     .family<List<WatchHistoryEntity>, WatchHistoryParams>((ref, params) async {
+  // Wait for auth tokens to be loaded before making the request
+  final authTokens = ref.watch(authTokensProvider);
+
+  // If no access token, return empty list (user not authenticated)
+  if (authTokens.accessToken == null) {
+    return <WatchHistoryEntity>[];
+  }
+
   final repository = ref.watch(watchHistoryRepositoryProvider);
 
   final link = ref.keepAlive();
@@ -45,6 +53,12 @@ final watchHistoryProvider = FutureProvider.autoDispose
     limit: params.limit,
     offset: params.offset,
   );
+});
+
+final refreshWatchHistoryProvider = Provider<void Function()>((ref) {
+  return () {
+    ref.invalidate(watchHistoryProvider);
+  };
 });
 
 final updateWatchProgressProvider = Provider<
