@@ -576,11 +576,6 @@ class _SubjectViewAppBarState extends ConsumerState<SubjectViewAppBar> {
                         : Icons.add_circle_outline_rounded,
                     color: isSubscribed ? Colors.green : Colors.white,
                   ),
-          )
-        else
-          const IconButton(
-            onPressed: null,
-            icon: Icon(Icons.add_circle_outline_rounded, color: Colors.grey),
           ),
       ],
     );

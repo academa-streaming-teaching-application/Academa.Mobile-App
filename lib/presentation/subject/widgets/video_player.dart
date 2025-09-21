@@ -1,11 +1,13 @@
 // presentation/video/video_player_screen.dart
 import 'package:academa_streaming_platform/domain/entities/live_streaming_entity.dart';
+import 'package:academa_streaming_platform/presentation/shared/shared_providers/watch_history_repository_providers.dart';
 import 'package:academa_streaming_platform/presentation/subject/provider/live_session_provider.dart';
 import 'package:academa_streaming_platform/presentation/subject/widgets/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:async';
 
 class VideoPlayerScreen extends ConsumerStatefulWidget {
   final String subjectId;
@@ -24,10 +26,15 @@ class VideoPlayerScreen extends ConsumerStatefulWidget {
 class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
   VideoPlayerController? _controller;
   String? _currentUrl;
+  String? _currentSessionId;
   bool _isInitialized = false;
   bool _isFullScreen = false;
   bool _showControls = true;
   bool _isBuffering = false;
+  Timer? _progressTimer;
+  int _lastReportedPosition = 0;
+
+  static const int _progressUpdateInterval = 10; // seconds
 
   @override
   void initState() {
@@ -70,8 +77,14 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
       _controller!.addListener(_onControllerTick);
       setState(() {
         _currentUrl = url;
+        _currentSessionId = session.id;
         _isInitialized = true;
       });
+
+      // Start progress tracking for VOD content
+      if (session.isRecorded) {
+        _startProgressTracking();
+      }
     } catch (_) {
       // opcional: mostrar error en UI
     } finally {
@@ -84,6 +97,14 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     final isBuffering = _controller?.value.isBuffering ?? false;
     if (isBuffering != _isBuffering && mounted) {
       setState(() => _isBuffering = isBuffering);
+    }
+
+    // Track watch progress for VOD content
+    if (_controller != null &&
+        _controller!.value.isInitialized &&
+        _currentSessionId != null &&
+        !_isBuffering) {
+      _trackWatchProgress();
     }
   }
 
@@ -118,8 +139,50 @@ class _VideoPlayerScreenState extends ConsumerState<VideoPlayerScreen> {
     ClassChatBottomSheet.show(context, widget.subjectId, widget.classNumber);
   }
 
+  void _startProgressTracking() {
+    _progressTimer?.cancel();
+    _progressTimer = Timer.periodic(
+      Duration(seconds: _progressUpdateInterval),
+      (_) => _trackWatchProgress(),
+    );
+  }
+
+  void _stopProgressTracking() {
+    _progressTimer?.cancel();
+    _progressTimer = null;
+  }
+
+  void _trackWatchProgress() {
+    if (_controller == null ||
+        !_controller!.value.isInitialized ||
+        _currentSessionId == null) {
+      return;
+    }
+
+    final position = _controller!.value.position.inSeconds;
+    final duration = _controller!.value.duration.inSeconds;
+
+    // Only update if position changed significantly or if at the end
+    if ((position - _lastReportedPosition).abs() >= _progressUpdateInterval ||
+        position >= duration - 5) {
+      _lastReportedPosition = position;
+
+      // Update watch progress
+      final updateWatchProgress = ref.read(updateWatchProgressProvider);
+      updateWatchProgress(
+        sessionId: _currentSessionId!,
+        currentTime: position,
+        totalDuration: duration,
+      ).catchError((error) {
+        // Silently handle errors to avoid disrupting playback
+        debugPrint('Error updating watch progress: $error');
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _stopProgressTracking();
     _controller?.removeListener(_onControllerTick);
     _controller?.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
