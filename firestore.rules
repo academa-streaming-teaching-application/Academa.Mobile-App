@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /subjects/{subjectId}/classes/{classNumber} {
+      allow read: if true;
+      allow create, update, delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if true;
+        allow write: if false; // todas las escrituras solo desde tu servidor (Admin)
+      }
+    }
+  }
+}
